@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFaculty } from '../context/FacultyContext';
+import { useSession } from '../context/SessionContext';
 import Sidebar from '../components/Sidebar';
 import {
   Chart as ChartJS,
@@ -37,6 +38,7 @@ ChartJS.register(
 const FacultyReportPage = () => {
   const navigate = useNavigate();
   const { facultyList } = useFaculty();
+  const { getFacultyAnalytics, getFacultySessions } = useSession();
   
   const facultyId = window.localStorage.getItem("facultyId");
   const facultyName = window.localStorage.getItem("facultyName");
@@ -46,21 +48,51 @@ const FacultyReportPage = () => {
     return facultyList.find(f => f.id === facultyId);
   }, [facultyList, facultyId]);
 
+  // Get real analytics data
+  const analyticsData = useMemo(() => {
+    return getFacultyAnalytics(facultyId);
+  }, [getFacultyAnalytics, facultyId]);
+
   // State for subject filter
   const [activeTab, setActiveTab] = useState('Overall');
 
   // Function to get data based on active tab
   const getDataForTab = (tab) => {
-    const isOverall = tab === 'Overall';
+    // Use real data if available, otherwise use mock data
+    const hasRealData = analyticsData.totalResponses > 0;
     
-    // Different data for each subject
+    if (hasRealData) {
+      return {
+        performanceScores: [4.2, 4.3, 4.5, 4.4, 4.6, 4.7, 4.5, analyticsData.averageRating],
+        deptAvg: [4.0, 4.1, 4.2, 4.1, 4.3, 4.2, 4.3, 4.4],
+        overallRating: analyticsData.averageRating,
+        totalResponses: analyticsData.totalResponses,
+        responseRate: 87,
+        positiveSentiment: analyticsData.sentimentDistribution.positive,
+        parameterScores: [
+          analyticsData.parameterAverages.teaching || 0,
+          analyticsData.parameterAverages.clarity || 0,
+          analyticsData.parameterAverages.engagement || 0,
+          analyticsData.parameterAverages.knowledge || 0,
+          analyticsData.parameterAverages.availability || 0,
+          analyticsData.parameterAverages.helpfulness || 0,
+        ],
+        sentimentDistribution: [
+          analyticsData.sentimentDistribution.positive,
+          analyticsData.sentimentDistribution.neutral,
+          analyticsData.sentimentDistribution.negative,
+        ],
+      };
+    }
+    
+    // Mock data when no feedback yet
     const subjectSpecificData = {
       'Overall': {
         performanceScores: [4.2, 4.3, 4.5, 4.4, 4.6, 4.7, 4.5, 4.8],
         deptAvg: [4.0, 4.1, 4.2, 4.1, 4.3, 4.2, 4.3, 4.4],
         overallRating: 4.6,
-        totalResponses: 342,
-        responseRate: 87,
+        totalResponses: 0,
+        responseRate: 0,
         positiveSentiment: 75,
         parameterScores: [4.7, 4.5, 4.8, 4.6, 4.3, 4.9],
         sentimentDistribution: [75, 20, 5],
@@ -69,8 +101,8 @@ const FacultyReportPage = () => {
         performanceScores: [4.3, 4.4, 4.6, 4.5, 4.7, 4.8, 4.6, 4.9],
         deptAvg: [4.0, 4.1, 4.2, 4.1, 4.3, 4.2, 4.3, 4.4],
         overallRating: 4.6,
-        totalResponses: 180,
-        responseRate: 89,
+        totalResponses: 0,
+        responseRate: 0,
         positiveSentiment: 78,
         parameterScores: [4.8, 4.6, 4.9, 4.7, 4.4, 4.9],
         sentimentDistribution: [78, 18, 4],
@@ -79,8 +111,8 @@ const FacultyReportPage = () => {
         performanceScores: [4.1, 4.2, 4.4, 4.3, 4.5, 4.6, 4.4, 4.7],
         deptAvg: [4.0, 4.1, 4.2, 4.1, 4.3, 4.2, 4.3, 4.4],
         overallRating: 4.4,
-        totalResponses: 162,
-        responseRate: 85,
+        totalResponses: 0,
+        responseRate: 0,
         positiveSentiment: 72,
         parameterScores: [4.6, 4.4, 4.7, 4.5, 4.2, 4.8],
         sentimentDistribution: [72, 22, 6],
@@ -432,43 +464,84 @@ const FacultyReportPage = () => {
               <h3 className="text-lg font-bold text-gray-900">Recent Feedback</h3>
             </div>
             
-            <div className="space-y-4">
-              {recentFeedback.map((feedback) => (
-                <div
-                  key={feedback.id}
-                  className="border border-gray-200 rounded-lg p-5 hover:shadow-md transition-shadow"
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <p className="font-semibold text-gray-900">{feedback.course}</p>
-                      <p className="text-sm text-gray-500">{feedback.date}</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="flex items-center gap-1">
-                        {[...Array(5)].map((_, i) => (
-                          <svg
-                            key={i}
-                            className={`w-4 h-4 ${
-                              i < feedback.rating ? 'text-yellow-400' : 'text-gray-300'
-                            }`}
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                          >
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                          </svg>
-                        ))}
+            {analyticsData.recentFeedback && analyticsData.recentFeedback.length > 0 ? (
+              <div className="space-y-4">
+                {analyticsData.recentFeedback.map((feedback) => (
+                  <div
+                    key={feedback.id}
+                    className="border border-gray-200 rounded-lg p-5 hover:shadow-md transition-shadow"
+                  >
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <p className="text-sm text-gray-500">
+                          {new Date(feedback.submittedAt).toLocaleDateString('en-US', { 
+                            month: 'short', 
+                            day: 'numeric', 
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </p>
                       </div>
-                      {feedback.sentiment === 'positive' ? (
-                        <ThumbsUp size={18} className="text-green-500" />
-                      ) : (
-                        <ThumbsDown size={18} className="text-red-500" />
-                      )}
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1">
+                          {[...Array(5)].map((_, i) => (
+                            <svg
+                              key={i}
+                              className={`w-4 h-4 ${
+                                i < feedback.overallRating ? 'text-yellow-400' : 'text-gray-300'
+                              }`}
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                          ))}
+                        </div>
+                        {feedback.overallRating >= 4 ? (
+                          <ThumbsUp size={18} className="text-green-500" />
+                        ) : feedback.overallRating === 3 ? (
+                          <MessageSquare size={18} className="text-yellow-500" />
+                        ) : (
+                          <ThumbsDown size={18} className="text-red-500" />
+                        )}
+                      </div>
                     </div>
+                    
+                    {feedback.strengths && (
+                      <div className="mb-3">
+                        <p className="text-sm font-semibold text-green-700 mb-1">👍 What worked well:</p>
+                        <p className="text-gray-700 leading-relaxed">{feedback.strengths}</p>
+                      </div>
+                    )}
+                    
+                    {feedback.improvements && (
+                      <div className="mb-3">
+                        <p className="text-sm font-semibold text-blue-700 mb-1">💡 Suggestions:</p>
+                        <p className="text-gray-700 leading-relaxed">{feedback.improvements}</p>
+                      </div>
+                    )}
+                    
+                    {feedback.comments && (
+                      <div>
+                        <p className="text-sm font-semibold text-gray-700 mb-1">💬 Additional comments:</p>
+                        <p className="text-gray-700 leading-relaxed">{feedback.comments}</p>
+                      </div>
+                    )}
+                    
+                    {!feedback.strengths && !feedback.improvements && !feedback.comments && (
+                      <p className="text-gray-500 italic">No written feedback provided</p>
+                    )}
                   </div>
-                  <p className="text-gray-700 leading-relaxed">{feedback.comment}</p>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <MessageSquare size={48} className="text-gray-300 mx-auto mb-4" />
+                <p className="text-gray-500 font-medium">No feedback received yet</p>
+                <p className="text-sm text-gray-400 mt-1">Generate a QR code to start collecting student feedback</p>
+              </div>
+            )}
           </div>
         </div>
       </div>

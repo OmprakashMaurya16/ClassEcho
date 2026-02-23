@@ -1,40 +1,54 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFaculty } from '../context/FacultyContext';
+import { useSession } from '../context/SessionContext';
 import { QrCode, BarChart3, Clock, ChevronRight } from 'lucide-react';
 import Sidebar from '../components/Sidebar';
+import QRCodeModal from '../components/QRCodeModal';
 
 const FacultyDashboard = () => {
   const navigate = useNavigate();
   const { facultyList } = useFaculty();
+  const { createSession, getFacultySessions, closeSession } = useSession();
   
   // Get logged-in faculty info from localStorage
   const facultyId = window.localStorage.getItem("facultyId");
   const facultyName = window.localStorage.getItem("facultyName");
   const facultyDepartment = window.localStorage.getItem("facultyDepartment");
 
+  // State for QR modal
+  const [showQRModal, setShowQRModal] = useState(false);
+  const [currentSessionId, setCurrentSessionId] = useState(null);
+  const [selectedCourse, setSelectedCourse] = useState('');
+  const [showCourseSelection, setShowCourseSelection] = useState(false);
+
   // Get current faculty data
   const currentFaculty = useMemo(() => {
     return facultyList.find(f => f.id === facultyId);
   }, [facultyList, facultyId]);
 
-  // Mock recent sessions data
-  const recentSessions = [
-    {
-      id: 1,
-      date: "Oct 24, 2023",
-      course: "Structural Analysis II",
-      responses: 42,
-      status: "Completed"
-    },
-    {
-      id: 2,
-      date: "Oct 22, 2023",
-      course: "Fluid Mechanics Lab",
-      responses: 18,
-      status: "Completed"
-    }
-  ];
+  // Get faculty sessions
+  const facultySessions = useMemo(() => {
+    return getFacultySessions(facultyId);
+  }, [getFacultySessions, facultyId]);
+
+  // Format recent sessions for display
+  const recentSessions = useMemo(() => {
+    return facultySessions
+      .slice(-5)
+      .reverse()
+      .map(session => ({
+        id: session.id,
+        date: new Date(session.createdAt).toLocaleDateString('en-US', { 
+          month: 'short', 
+          day: 'numeric', 
+          year: 'numeric' 
+        }),
+        course: session.course,
+        responses: session.responses?.length || 0,
+        status: session.status === 'active' ? 'Active' : 'Completed'
+      }));
+  }, [facultySessions]);
 
   const getDepartmentName = (dept) => {
     const names = {
@@ -52,8 +66,37 @@ const FacultyDashboard = () => {
   };
 
   const handleGenerateQR = () => {
-    // TODO: Implement QR code generation
-    alert("QR Code generation will be implemented soon!");
+    if (!currentFaculty?.subjectsTaught || currentFaculty.subjectsTaught.length === 0) {
+      alert('No courses assigned to you');
+      return;
+    }
+    
+    // If only one course, create session directly
+    if (currentFaculty.subjectsTaught.length === 1) {
+      createSessionAndShowQR(currentFaculty.subjectsTaught[0]);
+    } else {
+      // Show course selection
+      setShowCourseSelection(true);
+    }
+  };
+
+  const createSessionAndShowQR = (course) => {
+    const sessionId = createSession(
+      facultyId,
+      facultyName,
+      course,
+      getDepartmentName(facultyDepartment || currentFaculty?.department)
+    );
+    setCurrentSessionId(sessionId);
+    setSelectedCourse(course);
+    setShowCourseSelection(false);
+    setShowQRModal(true);
+  };
+
+  const handleCloseSession = (sessionId) => {
+    if (confirm('Are you sure you want to end this session? Students will no longer be able to submit feedback.')) {
+      closeSession(sessionId);
+    }
   };
 
   return (
@@ -149,44 +192,71 @@ const FacultyDashboard = () => {
           </div>
 
           <div className="overflow-hidden">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-200">
-                  <th className="text-left py-4 px-4 text-sm font-semibold text-gray-600 uppercase tracking-wide">
-                    Date
-                  </th>
-                  <th className="text-left py-4 px-4 text-sm font-semibold text-gray-600 uppercase tracking-wide">
-                    Course
-                  </th>
-                  <th className="text-center py-4 px-4 text-sm font-semibold text-gray-600 uppercase tracking-wide">
-                    Responses
-                  </th>
-                  <th className="text-center py-4 px-4 text-sm font-semibold text-gray-600 uppercase tracking-wide">
-                    Status
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {recentSessions.map((session) => (
-                  <tr key={session.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td className="py-4 px-4">
-                      <span className="text-gray-900 font-medium">{session.date}</span>
-                    </td>
-                    <td className="py-4 px-4">
-                      <span className="text-gray-700">{session.course}</span>
-                    </td>
-                    <td className="py-4 px-4 text-center">
-                      <span className="text-gray-900 font-semibold">{session.responses}</span>
-                    </td>
-                    <td className="py-4 px-4 text-center">
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-700">
-                        {session.status}
-                      </span>
-                    </td>
+            {recentSessions.length > 0 ? (
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-200">
+                    <th className="text-left py-4 px-4 text-sm font-semibold text-gray-600 uppercase tracking-wide">
+                      Date
+                    </th>
+                    <th className="text-left py-4 px-4 text-sm font-semibold text-gray-600 uppercase tracking-wide">
+                      Course
+                    </th>
+                    <th className="text-center py-4 px-4 text-sm font-semibold text-gray-600 uppercase tracking-wide">
+                      Responses
+                    </th>
+                    <th className="text-center py-4 px-4 text-sm font-semibold text-gray-600 uppercase tracking-wide">
+                      Status
+                    </th>
+                    <th className="text-center py-4 px-4 text-sm font-semibold text-gray-600 uppercase tracking-wide">
+                      Action
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {recentSessions.map((session) => (
+                    <tr key={session.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                      <td className="py-4 px-4">
+                        <span className="text-gray-900 font-medium">{session.date}</span>
+                      </td>
+                      <td className="py-4 px-4">
+                        <span className="text-gray-700">{session.course}</span>
+                      </td>
+                      <td className="py-4 px-4 text-center">
+                        <span className="text-gray-900 font-semibold">{session.responses}</span>
+                      </td>
+                      <td className="py-4 px-4 text-center">
+                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                          session.status === 'Active' 
+                            ? 'bg-blue-100 text-blue-700' 
+                            : 'bg-green-100 text-green-700'
+                        }`}>
+                          {session.status}
+                        </span>
+                      </td>
+                      <td className="py-4 px-4 text-center">
+                        {session.status === 'Active' ? (
+                          <button
+                            onClick={() => handleCloseSession(session.id)}
+                            className="text-sm text-red-600 hover:text-red-700 font-medium hover:bg-red-50 px-3 py-1 rounded-lg transition-colors"
+                          >
+                            End Session
+                          </button>
+                        ) : (
+                          <span className="text-sm text-gray-400">-</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <div className="text-center py-12">
+                <Clock size={48} className="text-gray-300 mx-auto mb-4" />
+                <p className="text-gray-500 font-medium">No sessions yet</p>
+                <p className="text-sm text-gray-400 mt-1">Generate a QR code to start collecting feedback</p>
+              </div>
+            )}
           </div>
 
           <div className="mt-6 flex justify-end">
@@ -212,6 +282,49 @@ const FacultyDashboard = () => {
         </div>
       </div>
       </div>
+
+      {/* QR Code Modal */}
+      <QRCodeModal
+        isOpen={showQRModal}
+        onClose={() => setShowQRModal(false)}
+        sessionId={currentSessionId}
+        course={selectedCourse}
+        facultyName={facultyName}
+      />
+
+      {/* Course Selection Modal */}
+      {showCourseSelection && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div 
+            className="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm"
+            onClick={() => setShowCourseSelection(false)}
+          ></div>
+          
+          <div className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 p-6">
+            <h3 className="text-xl font-bold text-gray-900 mb-4">Select Course</h3>
+            <p className="text-sm text-gray-600 mb-6">Choose the course for this feedback session</p>
+            
+            <div className="space-y-3">
+              {currentFaculty?.subjectsTaught?.map((course, index) => (
+                <button
+                  key={index}
+                  onClick={() => createSessionAndShowQR(course)}
+                  className="w-full text-left px-4 py-3 border border-gray-200 rounded-lg hover:bg-blue-50 hover:border-blue-300 transition-colors"
+                >
+                  <p className="font-medium text-gray-900">{course}</p>
+                </button>
+              ))}
+            </div>
+            
+            <button
+              onClick={() => setShowCourseSelection(false)}
+              className="w-full mt-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
