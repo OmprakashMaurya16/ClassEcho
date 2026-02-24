@@ -4,6 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { FacultyProvider } from "./context/FacultyContext";
 import { SessionProvider } from "./context/SessionContext";
+import { AssessmentProvider } from "./context/AssessmentContext";
 
 import Login from "./pages/Login";
 import ManageFaculty from "./pages/ManageFaculty";
@@ -16,6 +17,10 @@ import HodReport from "./pages/HodReport";
 import FacultyDashboard from "./pages/FacultyDashboard";
 import FacultyReportPage from "./pages/FacultyReportPage";
 import FeedbackForm from "./pages/FeedbackForm";
+import CreateAssessment from "./pages/CreateAssessment";
+import ConductOralAssessment from "./pages/ConductOralAssessment";
+import AssessmentResults from "./pages/AssessmentResults";
+import TakeTest from "./pages/TakeTest";
 
 
 const PrivateRoute = ({ children }) => {
@@ -37,9 +42,11 @@ const App = () => {
   return (
     <FacultyProvider>
       <SessionProvider>
-        <Routes>
+        <AssessmentProvider>
+          <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/feedback/:sessionId" element={<FeedbackForm />} />
+          <Route path="/assessment/:assessmentId/take" element={<TakeTest />} />
           <Route path="/admin" element={<PrivateRoute><AdminDashboard /></PrivateRoute>}/>
           <Route path="/admin/manage-faculty" element={<PrivateRoute><ManageFaculty /></PrivateRoute>}/>
           <Route path="/admin/add-faculty" element={<PrivateRoute><AddFaculty /></PrivateRoute>}/>
@@ -49,8 +56,12 @@ const App = () => {
           <Route path="/hod-dashboard/reports" element={<HodPrivateRoute><HodReport /></HodPrivateRoute>}/>
           <Route path="/faculty-dashboard" element={<FacultyPrivateRoute><FacultyDashboard /></FacultyPrivateRoute>}/>
           <Route path="/faculty/report/:id" element={<FacultyPrivateRoute><FacultyReportPage /></FacultyPrivateRoute>}/>
-        </Routes>
-        <ToastContainer position="bottom-right" autoClose={2000} />
+          <Route path="/faculty/assessment/create" element={<FacultyPrivateRoute><CreateAssessment /></FacultyPrivateRoute>}/>
+          <Route path="/faculty/assessment/:assessmentId/conduct" element={<FacultyPrivateRoute><ConductOralAssessment /></FacultyPrivateRoute>}/>
+          <Route path="/faculty/assessment/:assessmentId/results" element={<FacultyPrivateRoute><AssessmentResults /></FacultyPrivateRoute>}/>
+          </Routes>
+          <ToastContainer position="bottom-right" autoClose={2000} />
+        </AssessmentProvider>
       </SessionProvider>
     </FacultyProvider>
   );

@@ -73,11 +73,11 @@ const FeedbackForm = () => {
 
   const RatingStars = ({ value, onChange, label }) => {
     return (
-      <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+      <div className="mb-5 md:mb-6">
+        <label className="block text-sm md:text-base font-medium text-gray-700 mb-2">
           {label}
         </label>
-        <div className="flex gap-2">
+        <div className="flex gap-1 md:gap-2">
           {[1, 2, 3, 4, 5].map((star) => (
             <button
               key={star}
@@ -86,8 +86,8 @@ const FeedbackForm = () => {
               className="focus:outline-none transition-transform hover:scale-110"
             >
               <Star
-                size={32}
-                className={`${
+                size={28}
+                className={`md:w-8 md:h-8 ${
                   star <= value
                     ? 'fill-yellow-400 text-yellow-400'
                     : 'text-gray-300'
@@ -95,7 +95,7 @@ const FeedbackForm = () => {
               />
             </button>
           ))}
-          <span className="ml-2 text-sm text-gray-600 self-center">
+          <span className="ml-1 md:ml-2 text-xs md:text-sm text-gray-600 self-center">
             {value > 0 ? `${value}/5` : 'Not rated'}
           </span>
         </div>
@@ -105,7 +105,7 @@ const FeedbackForm = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center">
+      <div className="min-h-screen bg-linear-to-br from-blue-50 to-indigo-50 flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-600">Loading feedback form...</p>
@@ -116,11 +116,11 @@ const FeedbackForm = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-red-50 to-orange-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md text-center">
-          <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Session Not Found</h2>
-          <p className="text-gray-600 mb-6">{error}</p>
+      <div className="min-h-screen bg-linear-to-br from-red-50 to-orange-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-xl md:rounded-2xl shadow-xl p-6 md:p-8 max-w-md text-center">
+          <AlertCircle className="w-12 h-12 md:w-16 md:h-16 text-red-500 mx-auto mb-4" />
+          <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">Session Not Found</h2>
+          <p className="text-sm md:text-base text-gray-600 mb-4 md:mb-6">{error}</p>
           <button
             onClick={() => navigate('/')}
             className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-6 rounded-lg transition-colors"
@@ -134,11 +134,11 @@ const FeedbackForm = () => {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md text-center">
-          <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Thank You!</h2>
-          <p className="text-gray-600 mb-4">
+      <div className="min-h-screen bg-linear-to-br from-green-50 to-emerald-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-xl md:rounded-2xl shadow-xl p-6 md:p-8 max-w-md text-center">
+          <CheckCircle2 className="w-12 h-12 md:w-16 md:h-16 text-green-500 mx-auto mb-4" />
+          <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">Thank You!</h2>
+          <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">
             Your feedback has been submitted successfully.
           </p>
           <p className="text-sm text-gray-500">
@@ -150,35 +150,35 @@ const FeedbackForm = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-12 px-4">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 to-indigo-50 py-6 md:py-12 px-4">
       <div className="max-w-3xl mx-auto">
         {/* Header */}
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-6">
-          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-6">
-            <h1 className="text-3xl font-bold text-white mb-2">
+        <div className="bg-white rounded-xl md:rounded-2xl shadow-xl overflow-hidden mb-4 md:mb-6">
+          <div className="bg-linear-to-r from-blue-600 to-indigo-600 px-5 md:px-8 py-4 md:py-6">
+            <h1 className="text-2xl md:text-3xl font-bold text-white mb-1 md:mb-2">
               Faculty Feedback Form
             </h1>
-            <p className="text-blue-100">
+            <p className="text-sm md:text-base text-blue-100">
               Your anonymous feedback helps us improve
             </p>
           </div>
           
-          <div className="px-8 py-6 bg-gray-50 border-b border-gray-200">
-            <div className="grid grid-cols-2 gap-4">
+          <div className="px-5 md:px-8 py-4 md:py-6 bg-gray-50 border-b border-gray-200">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
               <div>
-                <p className="text-sm text-gray-500">Faculty</p>
-                <p className="font-semibold text-gray-900">{session.facultyName}</p>
+                <p className="text-xs md:text-sm text-gray-500">Faculty</p>
+                <p className="text-sm md:text-base font-semibold text-gray-900">{session.facultyName}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-500">Course</p>
-                <p className="font-semibold text-gray-900">{session.course}</p>
+                <p className="text-xs md:text-sm text-gray-500">Course</p>
+                <p className="text-sm md:text-base font-semibold text-gray-900">{session.course}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-500">Department</p>
-                <p className="font-semibold text-gray-900">{session.department}</p>
+                <p className="text-xs md:text-sm text-gray-500">Department</p>
+                <p className="text-sm md:text-base font-semibold text-gray-900">{session.department}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-500">Session</p>
+                <p className="text-xs md:text-sm text-gray-500">Session</p>
                 <p className="font-mono text-xs text-gray-600">{session.id}</p>
               </div>
             </div>
@@ -186,8 +186,8 @@ const FeedbackForm = () => {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-xl p-8">
-          <h2 className="text-xl font-bold text-gray-900 mb-6">
+        <form onSubmit={handleSubmit} className="bg-white rounded-xl md:rounded-2xl shadow-xl p-5 md:p-8">
+          <h2 className="text-lg md:text-xl font-bold text-gray-900 mb-4 md:mb-6">
             Rate the following parameters
           </h2>
 
@@ -227,7 +227,7 @@ const FeedbackForm = () => {
             onChange={(val) => handleRatingChange('helpfulness', val)}
           />
 
-          <div className="border-t border-gray-200 pt-6 mt-6">
+          <div className="border-t border-gray-200 pt-5 md:pt-6 mt-5 md:mt-6">
             <RatingStars
               label="Overall Rating"
               value={overallRating}
@@ -236,7 +236,7 @@ const FeedbackForm = () => {
           </div>
 
           {/* Text feedback */}
-          <div className="mt-8 space-y-6">
+          <div className="mt-6 md:mt-8 space-y-4 md:space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 What did you like most about this lecture? (Optional)
@@ -278,12 +278,11 @@ const FeedbackForm = () => {
           </div>
 
           {/* Submit button */}
-          <div className="mt-8 flex gap-4">
+          <div className="mt-6 md:mt-8 flex gap-4">
             <button
               type="submit"
-              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors flex items-center justify-center gap-2"
-            >
-              <Send size={20} />
+              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 md:py-4 px-4 md:px-6 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm md:text-base">
+              <Send size={18} />
               Submit Feedback
             </button>
           </div>

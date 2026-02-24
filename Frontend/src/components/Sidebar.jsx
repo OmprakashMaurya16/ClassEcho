@@ -1,5 +1,5 @@
 import React from "react";
-import { User, Users, FileText, LogOut, Plus, BarChart2, GraduationCap } from "lucide-react";
+import { User, Users, FileText, LogOut, Plus, BarChart2, GraduationCap, PenTool } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const Sidebar = ({ role = "Admin" }) => {
@@ -67,6 +67,12 @@ const Sidebar = ({ role = "Admin" }) => {
       icon: <BarChart2 size={18} />,
       path: `/faculty/report/${facultyId}`,
       active: location.pathname.startsWith("/faculty/report/"),
+    },
+    {
+      label: "Student Tests",
+      icon: <PenTool size={18} />,
+      path: "/faculty/assessment/create",
+      active: location.pathname.startsWith("/faculty/assessment"),
     },
   ];
   
