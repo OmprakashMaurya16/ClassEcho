@@ -3,16 +3,17 @@ import { X, Plus, Trash2 } from "lucide-react";
 import { useFaculty } from "../context/FacultyContext";
 
 const AddFacultyModal = () => {
-  const { isAddModalOpen, closeAddModal, addNewFaculty, departments } = useFaculty();
+  const { isAddModalOpen, closeAddModal, addNewFaculty, departments } =
+    useFaculty();
   const hodDepartment = window.localStorage.getItem("hodDepartment") || "INFT";
-  
+
   const [formData, setFormData] = useState({
     name: "",
     department: hodDepartment,
     designation: "",
     subjectsTaught: [],
   });
-  
+
   const [newSubject, setNewSubject] = useState("");
   const [errors, setErrors] = useState({});
 
@@ -22,7 +23,7 @@ const AddFacultyModal = () => {
       ...prev,
       [name]: value,
     }));
-    // Clear error for this field
+    
     if (errors[name]) {
       setErrors((prev) => ({
         ...prev,
@@ -32,7 +33,10 @@ const AddFacultyModal = () => {
   };
 
   const handleAddSubject = () => {
-    if (newSubject.trim() && !formData.subjectsTaught.includes(newSubject.trim())) {
+    if (
+      newSubject.trim() &&
+      !formData.subjectsTaught.includes(newSubject.trim())
+    ) {
       setFormData((prev) => ({
         ...prev,
         subjectsTaught: [...prev.subjectsTaught, newSubject.trim()],
@@ -56,19 +60,19 @@ const AddFacultyModal = () => {
 
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!formData.name.trim()) {
       newErrors.name = "Faculty name is required";
     }
-    
+
     if (!formData.designation) {
       newErrors.designation = "Designation is required";
     }
-    
+
     if (formData.subjectsTaught.length === 0) {
       newErrors.subjectsTaught = "At least one subject is required";
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -76,7 +80,7 @@ const AddFacultyModal = () => {
   const handleSave = () => {
     if (validateForm()) {
       addNewFaculty(formData);
-      // Reset form
+      
       setFormData({
         name: "",
         department: hodDepartment,
@@ -105,7 +109,7 @@ const AddFacultyModal = () => {
   return (
     <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 relative">
-        {/* Close button */}
+        
         <button
           onClick={handleClose}
           className="absolute top-4 right-4 p-1 rounded-full hover:bg-gray-100"
@@ -113,13 +117,17 @@ const AddFacultyModal = () => {
           <X size={20} className="text-gray-500" />
         </button>
 
-        {/* Header */}
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">Add New Faculty</h2>
-        <p className="text-sm text-gray-500 mb-6">Enter faculty information below</p>
+        
+        <h2 className="text-2xl font-bold text-gray-800 mb-2">
+          Add New Faculty
+        </h2>
+        <p className="text-sm text-gray-500 mb-6">
+          Enter faculty information below
+        </p>
 
-        {/* Form */}
+        
         <div className="space-y-4">
-          {/* Faculty Name */}
+          
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Faculty Name <span className="text-red-500">*</span>
@@ -130,7 +138,7 @@ const AddFacultyModal = () => {
               value={formData.name}
               onChange={handleChange}
               className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.name ? 'border-red-500' : 'border-gray-300'
+                errors.name ? "border-red-500" : "border-gray-300"
               }`}
               placeholder="Enter faculty name"
             />
@@ -139,7 +147,7 @@ const AddFacultyModal = () => {
             )}
           </div>
 
-          {/* Designation */}
+          
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Designation <span className="text-red-500">*</span>
@@ -149,7 +157,7 @@ const AddFacultyModal = () => {
               value={formData.designation}
               onChange={handleChange}
               className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.designation ? 'border-red-500' : 'border-gray-300'
+                errors.designation ? "border-red-500" : "border-gray-300"
               }`}
             >
               <option value="">Select Designation</option>
@@ -163,17 +171,20 @@ const AddFacultyModal = () => {
             )}
           </div>
 
-          {/* Subjects Taught */}
+          
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Subjects Taught <span className="text-red-500">*</span>
             </label>
+
             
-            {/* List of existing subjects */}
             {formData.subjectsTaught.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-2">
                 {formData.subjectsTaught.map((subject, index) => (
-                  <div key={index} className="inline-flex items-center gap-2 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-200">
+                  <div
+                    key={index}
+                    className="inline-flex items-center gap-2 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-200"
+                  >
                     <span className="text-sm text-gray-700">{subject}</span>
                     <button
                       type="button"
@@ -186,14 +197,16 @@ const AddFacultyModal = () => {
                 ))}
               </div>
             )}
+
             
-            {/* Add new subject */}
             <div className="flex gap-2">
               <input
                 type="text"
                 value={newSubject}
                 onChange={(e) => setNewSubject(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddSubject())}
+                onKeyPress={(e) =>
+                  e.key === "Enter" && (e.preventDefault(), handleAddSubject())
+                }
                 className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter subject name"
               />
@@ -207,12 +220,14 @@ const AddFacultyModal = () => {
               </button>
             </div>
             {errors.subjectsTaught && (
-              <p className="text-xs text-red-500 mt-1">{errors.subjectsTaught}</p>
+              <p className="text-xs text-red-500 mt-1">
+                {errors.subjectsTaught}
+              </p>
             )}
           </div>
         </div>
 
-        {/* Action Buttons */}
+        
         <div className="flex gap-3 mt-6">
           <button
             onClick={handleClose}

@@ -1,9 +1,6 @@
 import React, { createContext, useContext, useState } from "react";
 import { DEPARTMENTS, getDepartmentColor } from "../utils/constants";
 
-// TODO: Replace mock data with API calls when backend is ready
-// import { facultyAPI } from '../services/api';
-
 const FacultyContext = createContext();
 
 export const useFaculty = () => {
@@ -15,12 +12,8 @@ export const useFaculty = () => {
 };
 
 export const FacultyProvider = ({ children }) => {
-  // ============= STATE MANAGEMENT =============
-  
-  // Department list from constants
-  const departments = DEPARTMENTS.map(dept => dept.code);
+  const departments = DEPARTMENTS.map((dept) => dept.code);
 
-  // Faculty list state (TODO: Fetch from API on mount)
   const [facultyList, setFacultyList] = useState([
     {
       id: "FAC-001",
@@ -159,91 +152,72 @@ export const FacultyProvider = ({ children }) => {
     },
   ]);
 
-  // Search and filter state
   const [searchQuery, setSearchQuery] = useState("");
   const [departmentFilter, setDepartmentFilter] = useState("All Department");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  // Edit modal state
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingFaculty, setEditingFaculty] = useState(null);
 
-  // Delete modal state
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deletingFaculty, setDeletingFaculty] = useState(null);
 
-  // Add modal state
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
-  // Open edit modal with faculty data
   const openEditModal = (faculty) => {
     setEditingFaculty(faculty);
     setIsEditModalOpen(true);
   };
 
-  // Close edit modal
   const closeEditModal = () => {
     setIsEditModalOpen(false);
     setEditingFaculty(null);
   };
 
-  // Save edited faculty
   const saveEditedFaculty = (updatedFaculty) => {
-    // TODO: Replace with API call
-    // await facultyAPI.update(updatedFaculty.id, updatedFaculty);
-    
     setFacultyList((prevList) =>
       prevList.map((faculty) =>
-        faculty.id === updatedFaculty.id ? { ...faculty, ...updatedFaculty } : faculty
-      )
+        faculty.id === updatedFaculty.id
+          ? { ...faculty, ...updatedFaculty }
+          : faculty,
+      ),
     );
     closeEditModal();
   };
 
-  // Open delete confirmation modal
   const openDeleteModal = (faculty) => {
     setDeletingFaculty(faculty);
     setIsDeleteModalOpen(true);
   };
 
-  // Close delete modal
   const closeDeleteModal = () => {
     setIsDeleteModalOpen(false);
     setDeletingFaculty(null);
   };
 
-  // Confirm delete faculty
   const confirmDeleteFaculty = () => {
-    // TODO: Replace with API call
-    // await facultyAPI.delete(deletingFaculty.id);
-    
     setFacultyList((prevList) =>
-      prevList.filter((faculty) => faculty.id !== deletingFaculty.id)
+      prevList.filter((faculty) => faculty.id !== deletingFaculty.id),
     );
     closeDeleteModal();
   };
 
-  // Open add modal
   const openAddModal = () => {
     setIsAddModalOpen(true);
   };
 
-  // Close add modal
   const closeAddModal = () => {
     setIsAddModalOpen(false);
   };
 
-  // Add new faculty
   const addNewFaculty = (newFacultyData) => {
-    // Generate new faculty ID
     const maxId = facultyList.reduce((max, faculty) => {
-      const idNum = parseInt(faculty.id.split('-')[1]);
+      const idNum = parseInt(faculty.id.split("-")[1]);
       return idNum > max ? idNum : max;
     }, 0);
-    const newId = `FAC-${String(maxId + 1).padStart(3, '0')}`;
+    const newId = `FAC-${String(maxId + 1).padStart(3, "0")}`;
 
-    // Get department colors from constants
     const colors = getDepartmentColor(newFacultyData.department);
     const departmentColor = `${colors.bg} ${colors.text}`;
     const avatarColor = colors.avatar;
@@ -255,36 +229,31 @@ export const FacultyProvider = ({ children }) => {
       avatarColor,
     };
 
-    // TODO: Replace with API call
-    // await facultyAPI.create(newFaculty);
-
     setFacultyList((prevList) => [...prevList, newFaculty]);
     closeAddModal();
   };
 
-  // Filter and search logic
   const getFilteredFaculty = () => {
     let filtered = facultyList;
 
-    // Apply department filter
     if (departmentFilter && departmentFilter !== "All Department") {
-      filtered = filtered.filter((faculty) => faculty.department === departmentFilter);
+      filtered = filtered.filter(
+        (faculty) => faculty.department === departmentFilter,
+      );
     }
 
-    // Apply search filter
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(
         (faculty) =>
           faculty.name.toLowerCase().includes(query) ||
-          faculty.id.toLowerCase().includes(query)
+          faculty.id.toLowerCase().includes(query),
       );
     }
 
     return filtered;
   };
 
-  // Get paginated data
   const getPaginatedFaculty = () => {
     const filtered = getFilteredFaculty();
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -292,7 +261,6 @@ export const FacultyProvider = ({ children }) => {
     return filtered.slice(startIndex, endIndex);
   };
 
-  // Pagination helpers
   const totalItems = getFilteredFaculty().length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage + 1;
@@ -310,7 +278,6 @@ export const FacultyProvider = ({ children }) => {
     }
   };
 
-  // Reset to first page when search or filter changes
   const handleSearchChange = (query) => {
     setSearchQuery(query);
     setCurrentPage(1);
@@ -321,36 +288,33 @@ export const FacultyProvider = ({ children }) => {
     setCurrentPage(1);
   };
 
-  // Get faculty by specific department (for HOD)
   const getFacultyByDepartment = (department) => {
     return facultyList.filter((faculty) => faculty.department === department);
   };
 
-  // Get filtered faculty by department with search
   const getFilteredFacultyByDepartment = (department, searchTerm = "") => {
     let filtered = getFacultyByDepartment(department);
-    
+
     if (searchTerm.trim()) {
       const query = searchTerm.toLowerCase();
       filtered = filtered.filter(
         (faculty) =>
           faculty.name.toLowerCase().includes(query) ||
-          faculty.id.toLowerCase().includes(query)
+          faculty.id.toLowerCase().includes(query),
       );
     }
-    
+
     return filtered;
   };
 
-  // Calculate department analytics
   const getDepartmentAnalytics = (department) => {
     const deptFaculty = getFacultyByDepartment(department);
     const totalFaculty = deptFaculty.length;
-    
-    // Simulated average score calculation
+
     const scores = deptFaculty.map(() => 3.9 + Math.random() * 1.0);
-    const avgScore = scores.length > 0 ? scores.reduce((a, b) => a + b, 0) / scores.length : 0;
-    
+    const avgScore =
+      scores.length > 0 ? scores.reduce((a, b) => a + b, 0) / scores.length : 0;
+
     return {
       totalFaculty,
       avgScore,
@@ -375,12 +339,12 @@ export const FacultyProvider = ({ children }) => {
     openAddModal,
     closeAddModal,
     addNewFaculty,
-    // Search and filter
+
     searchQuery,
     departmentFilter,
     handleSearchChange,
     handleDepartmentChange,
-    // Pagination
+
     currentPage,
     totalPages,
     totalItems,
@@ -389,15 +353,13 @@ export const FacultyProvider = ({ children }) => {
     goToNextPage,
     goToPreviousPage,
     getPaginatedFaculty,
-    // Department specific (for HOD)
+
     getFacultyByDepartment,
     getFilteredFacultyByDepartment,
     getDepartmentAnalytics,
   };
 
   return (
-    <FacultyContext.Provider value={value}>
-      {children}
-    </FacultyContext.Provider>
+    <FacultyContext.Provider value={value}>{children}</FacultyContext.Provider>
   );
 };

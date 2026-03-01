@@ -11,13 +11,12 @@ const InputField = ({
   autoComplete,
 }) => {
   return (
-    <div className="mb-4">
+    <div className="mb-3">
       <label className="block text-sm font-medium text-gray-700 mb-1">
         {label}
       </label>
 
       <div className="relative">
-        {/* Left icon */}
         {icon && (
           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
             {icon}
@@ -36,7 +35,6 @@ const InputField = ({
           `}
         />
 
-        {/* Right icon */}
         {rightIcon && (
           <span className="absolute right-3 top-1/2 -translate-y-1/2">
             {rightIcon}

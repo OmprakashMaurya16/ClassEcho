@@ -3,27 +3,35 @@ import { X, Plus, Trash2 } from "lucide-react";
 import { useFaculty } from "../context/FacultyContext";
 
 const EditFacultyModal = () => {
-  const { isEditModalOpen, editingFaculty, closeEditModal, saveEditedFaculty, departments } = useFaculty();
-  
+  const {
+    isEditModalOpen,
+    editingFaculty,
+    closeEditModal,
+    saveEditedFaculty,
+    departments,
+  } = useFaculty();
+
   const [formData, setFormData] = useState({
     name: "",
     department: "",
     designation: "",
     subjectsTaught: [],
   });
-  
+
   const [newSubject, setNewSubject] = useState("");
 
-  // Populate form when editingFaculty changes
+  
   useEffect(() => {
     if (editingFaculty) {
       setFormData({
         name: editingFaculty.name || "",
         department: editingFaculty.department || "",
         designation: editingFaculty.designation || "",
-        subjectsTaught: Array.isArray(editingFaculty.subjectsTaught) 
-          ? editingFaculty.subjectsTaught 
-          : editingFaculty.subjectsTaught ? [editingFaculty.subjectsTaught] : [],
+        subjectsTaught: Array.isArray(editingFaculty.subjectsTaught)
+          ? editingFaculty.subjectsTaught
+          : editingFaculty.subjectsTaught
+            ? [editingFaculty.subjectsTaught]
+            : [],
       });
     }
   }, [editingFaculty]);
@@ -37,7 +45,10 @@ const EditFacultyModal = () => {
   };
 
   const handleAddSubject = () => {
-    if (newSubject.trim() && !formData.subjectsTaught.includes(newSubject.trim())) {
+    if (
+      newSubject.trim() &&
+      !formData.subjectsTaught.includes(newSubject.trim())
+    ) {
       setFormData((prev) => ({
         ...prev,
         subjectsTaught: [...prev.subjectsTaught, newSubject.trim()],
@@ -66,7 +77,7 @@ const EditFacultyModal = () => {
   return (
     <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 relative">
-        {/* Close button */}
+        
         <button
           onClick={closeEditModal}
           className="absolute top-4 right-4 p-1 rounded-full hover:bg-gray-100"
@@ -74,13 +85,15 @@ const EditFacultyModal = () => {
           <X size={20} className="text-gray-500" />
         </button>
 
-        {/* Header */}
+        
         <h2 className="text-2xl font-bold text-gray-800 mb-2">Edit Faculty</h2>
-        <p className="text-sm text-gray-500 mb-6">Update faculty information below</p>
+        <p className="text-sm text-gray-500 mb-6">
+          Update faculty information below
+        </p>
 
-        {/* Form */}
+        
         <div className="space-y-4">
-          {/* Faculty Name */}
+          
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Faculty Name
@@ -95,7 +108,7 @@ const EditFacultyModal = () => {
             />
           </div>
 
-          {/* Department */}
+          
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Department
@@ -107,13 +120,17 @@ const EditFacultyModal = () => {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Select Department</option>
-              {departments.filter(dept => dept !== "FE").map(dept => (
-                <option key={dept} value={dept}>{dept}</option>
-              ))}
+              {departments
+                .filter((dept) => dept !== "FE")
+                .map((dept) => (
+                  <option key={dept} value={dept}>
+                    {dept}
+                  </option>
+                ))}
             </select>
           </div>
 
-          {/* Designation */}
+          
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Designation
@@ -132,17 +149,20 @@ const EditFacultyModal = () => {
             </select>
           </div>
 
-          {/* Subjects Taught */}
+          
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Subjects Taught
             </label>
+
             
-            {/* List of existing subjects */}
             {formData.subjectsTaught.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-2">
                 {formData.subjectsTaught.map((subject, index) => (
-                  <div key={index} className="inline-flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-lg">
+                  <div
+                    key={index}
+                    className="inline-flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-lg"
+                  >
                     <span className="text-sm text-gray-700">{subject}</span>
                     <button
                       type="button"
@@ -155,14 +175,16 @@ const EditFacultyModal = () => {
                 ))}
               </div>
             )}
+
             
-            {/* Add new subject */}
             <div className="flex gap-2">
               <input
                 type="text"
                 value={newSubject}
                 onChange={(e) => setNewSubject(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddSubject())}
+                onKeyPress={(e) =>
+                  e.key === "Enter" && (e.preventDefault(), handleAddSubject())
+                }
                 className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter subject name"
               />
@@ -178,7 +200,7 @@ const EditFacultyModal = () => {
           </div>
         </div>
 
-        {/* Action Buttons */}
+        
         <div className="flex gap-3 mt-6">
           <button
             onClick={closeEditModal}

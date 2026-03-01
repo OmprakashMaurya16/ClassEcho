@@ -11,11 +11,9 @@ export const useSession = () => {
 };
 
 export const SessionProvider = ({ children }) => {
-  // Store active sessions and feedback responses
   const [sessions, setSessions] = useState([]);
   const [feedbackResponses, setFeedbackResponses] = useState([]);
 
-  // Create a new feedback session
   const createSession = (facultyId, facultyName, course, department) => {
     const sessionId = `SESSION-${Date.now()}`;
     const newSession = {
@@ -28,12 +26,11 @@ export const SessionProvider = ({ children }) => {
       responses: [],
       status: "active",
     };
-    
-    setSessions(prev => [...prev, newSession]);
+
+    setSessions((prev) => [...prev, newSession]);
     return sessionId;
   };
 
-  // Submit feedback for a session
   const submitFeedback = (sessionId, feedbackData) => {
     const feedback = {
       id: `FB-${Date.now()}`,
@@ -42,52 +39,45 @@ export const SessionProvider = ({ children }) => {
       ...feedbackData,
     };
 
-    // Add to feedback responses
-    setFeedbackResponses(prev => [...prev, feedback]);
+    setFeedbackResponses((prev) => [...prev, feedback]);
 
-    // Update session with new response
-    setSessions(prev =>
-      prev.map(session =>
+    setSessions((prev) =>
+      prev.map((session) =>
         session.id === sessionId
           ? { ...session, responses: [...session.responses, feedback] }
-          : session
-      )
+          : session,
+      ),
     );
 
     return feedback.id;
   };
 
-  // Get session by ID
   const getSession = (sessionId) => {
-    return sessions.find(s => s.id === sessionId);
+    return sessions.find((s) => s.id === sessionId);
   };
 
-  // Get all sessions for a faculty
   const getFacultySessions = (facultyId) => {
-    return sessions.filter(s => s.facultyId === facultyId);
+    return sessions.filter((s) => s.facultyId === facultyId);
   };
 
-  // Get feedback for a session
   const getSessionFeedback = (sessionId) => {
-    return feedbackResponses.filter(f => f.sessionId === sessionId);
+    return feedbackResponses.filter((f) => f.sessionId === sessionId);
   };
 
-  // Close/End a session
   const closeSession = (sessionId) => {
-    setSessions(prev =>
-      prev.map(session =>
+    setSessions((prev) =>
+      prev.map((session) =>
         session.id === sessionId
           ? { ...session, status: "completed" }
-          : session
-      )
+          : session,
+      ),
     );
   };
 
-  // Calculate analytics for a faculty
   const getFacultyAnalytics = (facultyId) => {
     const facultySessions = getFacultySessions(facultyId);
-    const allFeedback = feedbackResponses.filter(f => 
-      facultySessions.some(s => s.id === f.sessionId)
+    const allFeedback = feedbackResponses.filter((f) =>
+      facultySessions.some((s) => s.id === f.sessionId),
     );
 
     if (allFeedback.length === 0) {
@@ -100,23 +90,33 @@ export const SessionProvider = ({ children }) => {
       };
     }
 
-    // Calculate average rating
-    const totalRating = allFeedback.reduce((sum, f) => sum + f.overallRating, 0);
+    const totalRating = allFeedback.reduce(
+      (sum, f) => sum + f.overallRating,
+      0,
+    );
     const averageRating = totalRating / allFeedback.length;
 
-    // Calculate parameter averages
-    const parameters = ['teaching', 'clarity', 'engagement', 'knowledge', 'availability', 'helpfulness'];
+    const parameters = [
+      "teaching",
+      "clarity",
+      "engagement",
+      "knowledge",
+      "availability",
+      "helpfulness",
+    ];
     const parameterAverages = {};
-    
-    parameters.forEach(param => {
-      const total = allFeedback.reduce((sum, f) => sum + (f.ratings?.[param] || 0), 0);
+
+    parameters.forEach((param) => {
+      const total = allFeedback.reduce(
+        (sum, f) => sum + (f.ratings?.[param] || 0),
+        0,
+      );
       parameterAverages[param] = total / allFeedback.length;
     });
 
-    // Calculate sentiment distribution
-    const positive = allFeedback.filter(f => f.overallRating >= 4).length;
-    const neutral = allFeedback.filter(f => f.overallRating === 3).length;
-    const negative = allFeedback.filter(f => f.overallRating < 3).length;
+    const positive = allFeedback.filter((f) => f.overallRating >= 4).length;
+    const neutral = allFeedback.filter((f) => f.overallRating === 3).length;
+    const negative = allFeedback.filter((f) => f.overallRating < 3).length;
 
     return {
       totalResponses: allFeedback.length,
@@ -144,8 +144,6 @@ export const SessionProvider = ({ children }) => {
   };
 
   return (
-    <SessionContext.Provider value={value}>
-      {children}
-    </SessionContext.Provider>
+    <SessionContext.Provider value={value}>{children}</SessionContext.Provider>
   );
 };

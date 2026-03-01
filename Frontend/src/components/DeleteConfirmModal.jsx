@@ -3,14 +3,19 @@ import { AlertTriangle, X } from "lucide-react";
 import { useFaculty } from "../context/FacultyContext";
 
 const DeleteConfirmModal = () => {
-  const { isDeleteModalOpen, deletingFaculty, closeDeleteModal, confirmDeleteFaculty } = useFaculty();
+  const {
+    isDeleteModalOpen,
+    deletingFaculty,
+    closeDeleteModal,
+    confirmDeleteFaculty,
+  } = useFaculty();
 
   if (!isDeleteModalOpen) return null;
 
   return (
     <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 relative">
-        {/* Close button */}
+        
         <button
           onClick={closeDeleteModal}
           className="absolute top-4 right-4 p-1 rounded-full hover:bg-gray-100"
@@ -18,14 +23,14 @@ const DeleteConfirmModal = () => {
           <X size={20} className="text-gray-500" />
         </button>
 
-        {/* Warning Icon */}
+        
         <div className="flex justify-center mb-4">
           <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center">
             <AlertTriangle size={32} className="text-red-600" />
           </div>
         </div>
 
-        {/* Header */}
+        
         <h2 className="text-2xl font-bold text-gray-800 text-center mb-2">
           Delete Faculty
         </h2>
@@ -33,34 +38,43 @@ const DeleteConfirmModal = () => {
           Are you sure you want to delete this faculty member?
         </p>
 
-        {/* Faculty Details */}
+        
         {deletingFaculty && (
           <div className="bg-gray-50 rounded-lg p-4 mb-6">
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span className="text-sm font-medium text-gray-600">Name:</span>
-                <span className="text-sm text-gray-800">{deletingFaculty.name}</span>
+                <span className="text-sm text-gray-800">
+                  {deletingFaculty.name}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm font-medium text-gray-600">ID:</span>
-                <span className="text-sm text-gray-800">{deletingFaculty.id}</span>
+                <span className="text-sm text-gray-800">
+                  {deletingFaculty.id}
+                </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm font-medium text-gray-600">Department:</span>
-                <span className="text-sm text-gray-800">{deletingFaculty.department}</span>
+                <span className="text-sm font-medium text-gray-600">
+                  Department:
+                </span>
+                <span className="text-sm text-gray-800">
+                  {deletingFaculty.department}
+                </span>
               </div>
             </div>
           </div>
         )}
 
-        {/* Warning Message */}
+        
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-6">
           <p className="text-xs text-yellow-800">
-            This action cannot be undone. All data associated with this faculty member will be permanently removed.
+            This action cannot be undone. All data associated with this faculty
+            member will be permanently removed.
           </p>
         </div>
 
-        {/* Action Buttons */}
+        
         <div className="flex gap-3">
           <button
             onClick={closeDeleteModal}

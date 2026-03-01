@@ -14,7 +14,7 @@ const AddFaculty = () => {
     designation: "",
     subjectsTaught: [],
   });
-  
+
   const [newSubject, setNewSubject] = useState("");
 
   const handleChange = (e) => {
@@ -41,26 +41,18 @@ const AddFaculty = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     if (form.subjectsTaught.length === 0) {
       toast.error("Please add at least one subject");
       return;
     }
-    
-    // TODO: Add API call here
-    // try {
-    //   await facultyAPI.create(form);
-    //   toast.success("Faculty added successfully!");
-    // } catch (error) {
-    //   toast.error("Failed to add faculty");
-    // }
-    
+
     addNewFaculty(form);
     toast.success("Faculty added successfully!");
-    setForm({ 
-      name: "", 
-      department: "", 
-      email: "", 
+    setForm({
+      name: "",
+      department: "",
+      email: "",
       designation: "",
       subjectsTaught: [],
     });
@@ -71,21 +63,26 @@ const AddFaculty = () => {
     <div className="flex min-h-screen bg-gray-50">
       <Sidebar />
       <main className="flex-1 flex flex-col ml-60">
-        {/* Topbar */}
         <div className="flex items-center justify-between px-10 py-6 border-b border-gray-200 bg-white">
           <div>
-            <h2 className="text-2xl font-bold text-gray-800 mb-1">Add Faculty</h2>
-            <p className="text-gray-500 text-sm">Add a new faculty member to the directory</p>
+            <h2 className="text-2xl font-bold text-gray-800 mb-1">
+              Add Faculty
+            </h2>
+            <p className="text-gray-500 text-sm">
+              Add a new faculty member to the directory
+            </p>
           </div>
         </div>
-        {/* Content */}
+
         <div className="flex-1 px-10 py-8 flex justify-center items-start">
           <form
             className="w-full max-w-lg bg-white rounded-2xl shadow p-8"
             onSubmit={handleSubmit}
           >
             <div className="mb-5">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Name of Faculty</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Name of Faculty
+              </label>
               <input
                 type="text"
                 name="name"
@@ -97,7 +94,9 @@ const AddFaculty = () => {
               />
             </div>
             <div className="mb-5">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Department
+              </label>
               <select
                 name="department"
                 value={form.department}
@@ -107,12 +106,16 @@ const AddFaculty = () => {
               >
                 <option value="">Select department</option>
                 {departments.map((dept) => (
-                  <option key={dept} value={dept}>{dept}</option>
+                  <option key={dept} value={dept}>
+                    {dept}
+                  </option>
                 ))}
               </select>
             </div>
             <div className="mb-5">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Email Address
+              </label>
               <input
                 type="email"
                 name="email"
@@ -124,7 +127,9 @@ const AddFaculty = () => {
               />
             </div>
             <div className="mb-5">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Designation</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Designation
+              </label>
               <select
                 name="designation"
                 value={form.designation}
@@ -140,17 +145,18 @@ const AddFaculty = () => {
               </select>
             </div>
 
-            {/* Subjects Taught */}
             <div className="mb-8">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Subjects Taught <span className="text-red-500">*</span>
               </label>
-              
-              {/* List of existing subjects */}
+
               {form.subjectsTaught.length > 0 && (
                 <div className="flex flex-wrap gap-2 mb-3">
                   {form.subjectsTaught.map((subject, index) => (
-                    <div key={index} className="inline-flex items-center gap-2 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-200">
+                    <div
+                      key={index}
+                      className="inline-flex items-center gap-2 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-200"
+                    >
                       <span className="text-sm text-gray-700">{subject}</span>
                       <button
                         type="button"
@@ -163,14 +169,16 @@ const AddFaculty = () => {
                   ))}
                 </div>
               )}
-              
-              {/* Add new subject */}
+
               <div className="flex gap-2">
                 <input
                   type="text"
                   value={newSubject}
                   onChange={(e) => setNewSubject(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddSubject())}
+                  onKeyPress={(e) =>
+                    e.key === "Enter" &&
+                    (e.preventDefault(), handleAddSubject())
+                  }
                   className="flex-1 py-2.5 px-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-200"
                   placeholder="Enter subject name"
                 />
@@ -193,7 +201,7 @@ const AddFaculty = () => {
             </button>
           </form>
         </div>
-        <Footer className="mb-10"/>
+        <Footer className="mb-10" />
 
         <ToastContainer position="bottom-right" autoClose={2000} />
       </main>

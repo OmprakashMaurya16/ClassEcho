@@ -1,29 +1,38 @@
-import React, { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Sidebar from '../components/Sidebar';
-import Footer from '../components/Footer';
-import FacultyCard from '../components/FacultyCard';
-import AddFacultyModal from '../components/AddFacultyModal';
-import { useFaculty } from '../context/FacultyContext';
-import { Search, Users, Star, Plus, Bell, ChevronRight, Settings } from 'lucide-react';
+import React, { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+import Sidebar from "../components/Sidebar";
+import Footer from "../components/Footer";
+import FacultyCard from "../components/FacultyCard";
+import AddFacultyModal from "../components/AddFacultyModal";
+import { useFaculty } from "../context/FacultyContext";
+import {
+  Search,
+  Users,
+  Star,
+  Plus,
+  Bell,
+  ChevronRight,
+  Settings,
+} from "lucide-react";
 
 const HodDashboard = () => {
   const hodDepartment = window.localStorage.getItem("hodDepartment") || "INFT";
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
-  const { getFilteredFacultyByDepartment, getDepartmentAnalytics, openAddModal } = useFaculty();
+  const {
+    getFilteredFacultyByDepartment,
+    getDepartmentAnalytics,
+    openAddModal,
+  } = useFaculty();
 
-  // Get department-specific faculty with search filtering
   const departmentFaculty = useMemo(() => {
     return getFilteredFacultyByDepartment(hodDepartment, searchQuery);
   }, [hodDepartment, searchQuery, getFilteredFacultyByDepartment]);
 
-  // Limit to 3 faculty members on dashboard
   const displayedFaculty = useMemo(() => {
     return departmentFaculty.slice(0, 3);
   }, [departmentFaculty]);
 
-  // Calculate real-time analytics
   const analytics = useMemo(() => {
     return getDepartmentAnalytics(hodDepartment);
   }, [hodDepartment, getDepartmentAnalytics]);
@@ -32,11 +41,11 @@ const HodDashboard = () => {
 
   const getDepartmentName = (dept) => {
     const names = {
-      "INFT": "Information Technology",
-      "CMPN": "Computer Engineering",
-      "EXTC": "Electronics & Telecommunication",
-      "EXCS": "Mechanical Engineering",
-      "BIOMED": "Biomedical Engineering",
+      INFT: "Information Technology",
+      CMPN: "Computer Engineering",
+      EXTC: "Electronics & Telecommunication",
+      EXCS: "Mechanical Engineering",
+      BIOMED: "Biomedical Engineering",
     };
     return names[dept] || dept;
   };
@@ -54,11 +63,7 @@ const HodDashboard = () => {
       <Sidebar role="HOD" />
       <AddFacultyModal />
       <main className="flex-1 ml-60">
-
-        {/* Main Content */}
         <div className="px-10 py-8">
-          {/* Department Header */}
-          
           <div className="flex items-end justify-between mb-6">
             <div>
               <h1 className="text-3xl font-bold text-gray-800 mb-2">
@@ -75,7 +80,6 @@ const HodDashboard = () => {
             </button>
           </div>
 
-          {/* Analytics Cards */}
           <div className="grid grid-cols-2 gap-6 mb-8">
             <div className="bg-white rounded-xl shadow-sm p-6">
               <div className="flex items-center justify-between mb-3">
@@ -85,8 +89,12 @@ const HodDashboard = () => {
                 </div>
               </div>
               <div className="flex items-end gap-2">
-                <h2 className="text-4xl font-bold text-gray-800">{totalFaculty}</h2>
-                <span className="text-green-600 text-sm font-medium mb-1">↑ 2%</span>
+                <h2 className="text-4xl font-bold text-gray-800">
+                  {totalFaculty}
+                </h2>
+                <span className="text-green-600 text-sm font-medium mb-1">
+                  ↑ 2%
+                </span>
               </div>
             </div>
 
@@ -98,17 +106,23 @@ const HodDashboard = () => {
                 </div>
               </div>
               <div className="flex items-end gap-2">
-                <h2 className="text-4xl font-bold text-gray-800">{avgScore.toFixed(1)}</h2>
+                <h2 className="text-4xl font-bold text-gray-800">
+                  {avgScore.toFixed(1)}
+                </h2>
                 <span className="text-xs text-gray-500 mb-1">/ 5.0</span>
-                <span className="text-green-600 text-sm font-medium mb-1">↑ 0.1%</span>
+                <span className="text-green-600 text-sm font-medium mb-1">
+                  ↑ 0.1%
+                </span>
               </div>
             </div>
           </div>
 
-          {/* Search Bar */}
           <div className="mb-6">
             <div className="relative max-w-md">
-              <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <Search
+                size={18}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              />
               <input
                 type="text"
                 placeholder="Search faculty by name..."
@@ -119,7 +133,6 @@ const HodDashboard = () => {
             </div>
           </div>
 
-          {/* Faculty Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {displayedFaculty.map((faculty) => (
               <FacultyCard
@@ -128,14 +141,16 @@ const HodDashboard = () => {
                 onViewDetails={handleViewDetails}
               />
             ))}
-            
-            {/* Add New Faculty Card */}
+
             <button
               onClick={handleAddFaculty}
               className="bg-white rounded-xl shadow-sm p-6 border-2 border-dashed border-gray-200 hover:border-blue-400 hover:bg-blue-50 transition-all flex flex-col items-center justify-center min-h-50 group"
             >
               <div className="w-12 h-12 rounded-full bg-gray-100 group-hover:bg-blue-100 flex items-center justify-center mb-3 transition-colors">
-                <Plus size={24} className="text-gray-400 group-hover:text-blue-600" />
+                <Plus
+                  size={24}
+                  className="text-gray-400 group-hover:text-blue-600"
+                />
               </div>
               <h3 className="font-semibold text-gray-700 group-hover:text-blue-600 mb-1">
                 Add New Faculty
@@ -146,16 +161,19 @@ const HodDashboard = () => {
             </button>
           </div>
 
-          {/* No Results Message */}
           {departmentFaculty.length === 0 && !searchQuery && (
             <div className="text-center py-12">
-              <p className="text-gray-500">No faculty members found in this department.</p>
+              <p className="text-gray-500">
+                No faculty members found in this department.
+              </p>
             </div>
           )}
-          
+
           {departmentFaculty.length === 0 && searchQuery && (
             <div className="text-center py-12">
-              <p className="text-gray-500">No faculty members match your search.</p>
+              <p className="text-gray-500">
+                No faculty members match your search.
+              </p>
             </div>
           )}
         </div>

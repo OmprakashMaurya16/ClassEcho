@@ -1,18 +1,29 @@
 import React from "react";
-import { User, Users, FileText, LogOut, Plus, BarChart2, GraduationCap, PenTool } from "lucide-react";
+import {
+  User,
+  Users,
+  FileText,
+  LogOut,
+  Plus,
+  BarChart2,
+  GraduationCap,
+  PenTool,
+} from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const Sidebar = ({ role = "Admin" }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  
+
   const userRole = role || window.localStorage.getItem("userRole") || "Admin";
   const hodDepartment = window.localStorage.getItem("hodDepartment") || "";
   const hodName = window.localStorage.getItem("hodName") || "HOD User";
-  const facultyName = window.localStorage.getItem("facultyName") || "Faculty User";
+  const facultyName =
+    window.localStorage.getItem("facultyName") || "Faculty User";
   const facultyId = window.localStorage.getItem("facultyId") || "";
-  const facultyDepartment = window.localStorage.getItem("facultyDepartment") || "";
-  
+  const facultyDepartment =
+    window.localStorage.getItem("facultyDepartment") || "";
+
   const adminNavItems = [
     {
       label: "Dashboard",
@@ -33,7 +44,7 @@ const Sidebar = ({ role = "Admin" }) => {
       active: location.pathname === "/admin/manage-faculty",
     },
   ];
-  
+
   const hodNavItems = [
     {
       label: "Dashboard",
@@ -51,7 +62,7 @@ const Sidebar = ({ role = "Admin" }) => {
       label: "Reports",
       icon: <BarChart2 size={18} />,
       path: "/hod-dashboard/reports",
-      active:  location.pathname === "/hod-dashboard/reports",
+      active: location.pathname === "/hod-dashboard/reports",
     },
   ];
 
@@ -75,9 +86,14 @@ const Sidebar = ({ role = "Admin" }) => {
       active: location.pathname.startsWith("/faculty/assessment"),
     },
   ];
-  
-  const navItems = userRole === "HOD" ? hodNavItems : userRole === "Faculty" ? facultyNavItems : adminNavItems;
-  
+
+  const navItems =
+    userRole === "HOD"
+      ? hodNavItems
+      : userRole === "Faculty"
+        ? facultyNavItems
+        : adminNavItems;
+
   const handleLogout = () => {
     window.localStorage.clear();
     navigate("/");
@@ -86,7 +102,9 @@ const Sidebar = ({ role = "Admin" }) => {
   return (
     <aside className="fixed top-0 left-0 flex flex-col h-screen w-60 bg-white border-r border-gray-200 overflow-hidden">
       <div className="flex items-center gap-2 px-10 py-6 border-b border-gray-100">
-        <div className="rounded-md bg-blue-200 p-2"><GraduationCap size={20} color="blue"/></div>
+        <div className="rounded-md bg-blue-200 p-2">
+          <GraduationCap size={20} color="blue" />
+        </div>
         <span className="font-bold text-lg text-gray-800">ClassEcho</span>
       </div>
       <nav className="flex-1 px-2 py-4">
@@ -112,14 +130,22 @@ const Sidebar = ({ role = "Admin" }) => {
           </span>
           <div className="flex flex-col cursor-pointer">
             <span className="font-medium text-sm text-gray-800">
-              {userRole === "HOD" ? hodName : userRole === "Faculty" ? facultyName : "Admin User"}
+              {userRole === "HOD"
+                ? hodName
+                : userRole === "Faculty"
+                  ? facultyName
+                  : "Admin User"}
             </span>
             <span className="text-xs text-gray-400">
-              {userRole === "HOD" ? `HOD (${hodDepartment})` : userRole === "Faculty" ? facultyDepartment : "Engineering Inst."}
+              {userRole === "HOD"
+                ? `HOD (${hodDepartment})`
+                : userRole === "Faculty"
+                  ? facultyDepartment
+                  : "Engineering Inst."}
             </span>
           </div>
         </div>
-        <button 
+        <button
           onClick={handleLogout}
           className="flex items-center gap-2 px-6 py-3 text-gray-500 hover:text-red-500 cursor-pointer text-sm font-medium w-full hover:bg-gray-50"
         >

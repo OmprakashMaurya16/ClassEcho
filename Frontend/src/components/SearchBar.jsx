@@ -15,7 +15,6 @@ const SearchBar = ({ value, onChange }) => (
         className="w-full py-2.5 pl-10 pr-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 bg-gray-50 text-sm cursor-text"
       />
     </div>
-    
   </div>
 );
 

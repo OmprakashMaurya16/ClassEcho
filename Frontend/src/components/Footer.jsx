@@ -3,7 +3,7 @@ import React from "react";
 const Footer = () => {
   return (
     <div>
-      <div className="w-full text-center mt-8 mb-4 text-xs text-gray-400">
+      <div className="w-full text-center py-3 text-xs text-gray-400">
         © 2026 Vidyalankar Institute of Technology, Mumbai. All rights reserved.
         <br />
         <a href="#" className="hover:underline">

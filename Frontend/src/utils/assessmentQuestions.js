@@ -1,19 +1,18 @@
-// Pre-Semester Assessment Questions by Subject
-
 export const assessmentQuestions = {
   "Machine Learning": [
     {
       id: 1,
-      question: "What is the primary difference between supervised and unsupervised learning?",
+      question:
+        "What is the primary difference between supervised and unsupervised learning?",
       options: [
         "Supervised learning uses labeled data, unsupervised learning uses unlabeled data",
         "Supervised learning is faster than unsupervised learning",
         "Unsupervised learning requires more computational power",
-        "There is no significant difference"
+        "There is no significant difference",
       ],
       correctAnswer: 0,
       difficulty: "easy",
-      topic: "ML Fundamentals"
+      topic: "ML Fundamentals",
     },
     {
       id: 2,
@@ -22,11 +21,11 @@ export const assessmentQuestions = {
         "K-means clustering",
         "Linear Regression",
         "Decision Trees",
-        "PCA"
+        "PCA",
       ],
       correctAnswer: 2,
       difficulty: "medium",
-      topic: "Classification Algorithms"
+      topic: "Classification Algorithms",
     },
     {
       id: 3,
@@ -35,11 +34,11 @@ export const assessmentQuestions = {
         "The model performs poorly on training data",
         "The model memorizes training data and performs poorly on new data",
         "The model is too simple",
-        "The model has too few parameters"
+        "The model has too few parameters",
       ],
       correctAnswer: 1,
       difficulty: "medium",
-      topic: "Model Evaluation"
+      topic: "Model Evaluation",
     },
     {
       id: 4,
@@ -48,24 +47,19 @@ export const assessmentQuestions = {
         "To speed up training",
         "To assess model performance and prevent overfitting",
         "To reduce dataset size",
-        "To eliminate outliers"
+        "To eliminate outliers",
       ],
       correctAnswer: 1,
       difficulty: "medium",
-      topic: "Model Validation"
+      topic: "Model Validation",
     },
     {
       id: 5,
       question: "Which metric is best for imbalanced classification problems?",
-      options: [
-        "Accuracy",
-        "F1-Score",
-        "Mean Squared Error",
-        "R-squared"
-      ],
+      options: ["Accuracy", "F1-Score", "Mean Squared Error", "R-squared"],
       correctAnswer: 1,
       difficulty: "hard",
-      topic: "Evaluation Metrics"
+      topic: "Evaluation Metrics",
     },
     {
       id: 6,
@@ -74,11 +68,11 @@ export const assessmentQuestions = {
         "Data preprocessing",
         "Optimizing model parameters",
         "Feature selection",
-        "Data visualization"
+        "Data visualization",
       ],
       correctAnswer: 1,
       difficulty: "medium",
-      topic: "Optimization"
+      topic: "Optimization",
     },
     {
       id: 7,
@@ -87,24 +81,20 @@ export const assessmentQuestions = {
         "To increase model complexity",
         "To prevent overfitting by adding penalty terms",
         "To speed up training",
-        "To handle missing data"
+        "To handle missing data",
       ],
       correctAnswer: 1,
       difficulty: "hard",
-      topic: "Regularization"
+      topic: "Regularization",
     },
     {
       id: 8,
-      question: "Which of the following is an example of dimensionality reduction?",
-      options: [
-        "K-means",
-        "SVM",
-        "PCA",
-        "Random Forest"
-      ],
+      question:
+        "Which of the following is an example of dimensionality reduction?",
+      options: ["K-means", "SVM", "PCA", "Random Forest"],
       correctAnswer: 2,
       difficulty: "medium",
-      topic: "Dimensionality Reduction"
+      topic: "Dimensionality Reduction",
     },
     {
       id: 9,
@@ -113,11 +103,11 @@ export const assessmentQuestions = {
         "Faster training time",
         "Combining multiple models improves prediction accuracy",
         "Requires less data",
-        "Easier to interpret"
+        "Easier to interpret",
       ],
       correctAnswer: 1,
       difficulty: "medium",
-      topic: "Ensemble Learning"
+      topic: "Ensemble Learning",
     },
     {
       id: 10,
@@ -126,12 +116,12 @@ export const assessmentQuestions = {
         "Model training speed",
         "Classification model performance",
         "Feature importance",
-        "Data distribution"
+        "Data distribution",
       ],
       correctAnswer: 1,
       difficulty: "easy",
-      topic: "Model Evaluation"
-    }
+      topic: "Model Evaluation",
+    },
   ],
   "Data Science": [
     {
@@ -141,24 +131,19 @@ export const assessmentQuestions = {
         "Model building",
         "Data collection and understanding",
         "Deployment",
-        "Visualization"
+        "Visualization",
       ],
       correctAnswer: 1,
       difficulty: "easy",
-      topic: "Data Science Workflow"
+      topic: "Data Science Workflow",
     },
     {
       id: 2,
       question: "Which Python library is primarily used for data manipulation?",
-      options: [
-        "NumPy",
-        "Pandas",
-        "Matplotlib",
-        "Scikit-learn"
-      ],
+      options: ["NumPy", "Pandas", "Matplotlib", "Scikit-learn"],
       correctAnswer: 1,
       difficulty: "easy",
-      topic: "Python Libraries"
+      topic: "Python Libraries",
     },
     {
       id: 3,
@@ -167,11 +152,11 @@ export const assessmentQuestions = {
         "Final model testing",
         "Initial investigation to discover patterns and anomalies",
         "Data deployment",
-        "Model optimization"
+        "Model optimization",
       ],
       correctAnswer: 1,
       difficulty: "medium",
-      topic: "EDA"
+      topic: "EDA",
     },
     {
       id: 4,
@@ -180,11 +165,11 @@ export const assessmentQuestions = {
         "Always delete the rows",
         "Imputation, deletion, or prediction based on context",
         "Replace with zeros",
-        "Ignore them"
+        "Ignore them",
       ],
       correctAnswer: 1,
       difficulty: "medium",
-      topic: "Data Preprocessing"
+      topic: "Data Preprocessing",
     },
     {
       id: 5,
@@ -193,11 +178,11 @@ export const assessmentQuestions = {
         "To improve model interpretability",
         "To normalize features to similar ranges",
         "To reduce dataset size",
-        "To eliminate outliers"
+        "To eliminate outliers",
       ],
       correctAnswer: 1,
       difficulty: "medium",
-      topic: "Feature Engineering"
+      topic: "Feature Engineering",
     },
     {
       id: 6,
@@ -206,24 +191,20 @@ export const assessmentQuestions = {
         "Causation",
         "Statistical relationship",
         "Independence",
-        "Prediction accuracy"
+        "Prediction accuracy",
       ],
       correctAnswer: 1,
       difficulty: "medium",
-      topic: "Statistical Analysis"
+      topic: "Statistical Analysis",
     },
     {
       id: 7,
-      question: "Which visualization is best for showing distribution of a single variable?",
-      options: [
-        "Scatter plot",
-        "Histogram",
-        "Line chart",
-        "Heatmap"
-      ],
+      question:
+        "Which visualization is best for showing distribution of a single variable?",
+      options: ["Scatter plot", "Histogram", "Line chart", "Heatmap"],
       correctAnswer: 1,
       difficulty: "easy",
-      topic: "Data Visualization"
+      topic: "Data Visualization",
     },
     {
       id: 8,
@@ -232,11 +213,11 @@ export const assessmentQuestions = {
         "Data cleaning",
         "Comparing two versions to determine which performs better",
         "Feature selection",
-        "Model training"
+        "Model training",
       ],
       correctAnswer: 1,
       difficulty: "medium",
-      topic: "Experimentation"
+      topic: "Experimentation",
     },
     {
       id: 9,
@@ -245,11 +226,11 @@ export const assessmentQuestions = {
         "To save memory",
         "To evaluate model performance on unseen data",
         "To speed up training",
-        "To reduce overfitting"
+        "To reduce overfitting",
       ],
       correctAnswer: 1,
       difficulty: "medium",
-      topic: "Model Validation"
+      topic: "Model Validation",
     },
     {
       id: 10,
@@ -258,14 +239,14 @@ export const assessmentQuestions = {
         "Only volume",
         "Volume, velocity, and variety (3 Vs)",
         "Only velocity",
-        "Small datasets"
+        "Small datasets",
       ],
       correctAnswer: 1,
       difficulty: "easy",
-      topic: "Big Data"
-    }
+      topic: "Big Data",
+    },
   ],
-  "Default": [
+  Default: [
     {
       id: 1,
       question: "What is the primary goal of effective teaching?",
@@ -273,24 +254,25 @@ export const assessmentQuestions = {
         "Completing the syllabus",
         "Facilitating student understanding and learning",
         "Lecturing for the entire class",
-        "Maintaining discipline"
+        "Maintaining discipline",
       ],
       correctAnswer: 1,
       difficulty: "easy",
-      topic: "Teaching Fundamentals"
+      topic: "Teaching Fundamentals",
     },
     {
       id: 2,
-      question: "Which teaching method encourages active student participation?",
+      question:
+        "Which teaching method encourages active student participation?",
       options: [
         "Pure lecture",
         "Interactive discussions and problem-solving",
         "Reading from textbook",
-        "Silent study"
+        "Silent study",
       ],
       correctAnswer: 1,
       difficulty: "easy",
-      topic: "Teaching Methods"
+      topic: "Teaching Methods",
     },
     {
       id: 3,
@@ -299,11 +281,11 @@ export const assessmentQuestions = {
         "All at once without breaks",
         "Breaking down into smaller, manageable parts with examples",
         "Only through theory",
-        "Without examples"
+        "Without examples",
       ],
       correctAnswer: 1,
       difficulty: "medium",
-      topic: "Concept Clarity"
+      topic: "Concept Clarity",
     },
     {
       id: 4,
@@ -312,11 +294,11 @@ export const assessmentQuestions = {
         "To punish students",
         "To measure learning and provide feedback for improvement",
         "To make students competitive",
-        "To reduce class size"
+        "To reduce class size",
       ],
       correctAnswer: 1,
       difficulty: "medium",
-      topic: "Assessment"
+      topic: "Assessment",
     },
     {
       id: 5,
@@ -325,11 +307,11 @@ export const assessmentQuestions = {
         "Strict rules only",
         "Interactive activities, questions, and real-world examples",
         "Longer lectures",
-        "More homework"
+        "More homework",
       ],
       correctAnswer: 1,
       difficulty: "medium",
-      topic: "Student Engagement"
+      topic: "Student Engagement",
     },
     {
       id: 6,
@@ -338,11 +320,11 @@ export const assessmentQuestions = {
         "To criticize students",
         "To guide improvement and reinforce learning",
         "To reduce workload",
-        "To maintain authority"
+        "To maintain authority",
       ],
       correctAnswer: 1,
       difficulty: "medium",
-      topic: "Feedback"
+      topic: "Feedback",
     },
     {
       id: 7,
@@ -351,11 +333,11 @@ export const assessmentQuestions = {
         "Focus only on fast learners",
         "Provide differentiated instruction and support",
         "Ignore struggling students",
-        "Same pace for everyone"
+        "Same pace for everyone",
       ],
       correctAnswer: 1,
       difficulty: "hard",
-      topic: "Inclusive Teaching"
+      topic: "Inclusive Teaching",
     },
     {
       id: 8,
@@ -364,24 +346,25 @@ export const assessmentQuestions = {
         "Strict silence",
         "Safe, supportive, and encouraging atmosphere",
         "Competitive pressure",
-        "Isolation"
+        "Isolation",
       ],
       correctAnswer: 1,
       difficulty: "easy",
-      topic: "Learning Environment"
+      topic: "Learning Environment",
     },
     {
       id: 9,
-      question: "How important is relating course content to real-world applications?",
+      question:
+        "How important is relating course content to real-world applications?",
       options: [
         "Not important",
         "Very important - helps students see relevance and increases motivation",
         "Only for advanced courses",
-        "Wastes time"
+        "Wastes time",
       ],
       correctAnswer: 1,
       difficulty: "medium",
-      topic: "Practical Application"
+      topic: "Practical Application",
     },
     {
       id: 10,
@@ -390,125 +373,124 @@ export const assessmentQuestions = {
         "Unnecessary after initial training",
         "Ongoing learning to improve teaching skills and knowledge",
         "Only for new teachers",
-        "Waste of time"
+        "Waste of time",
       ],
       correctAnswer: 1,
       difficulty: "medium",
-      topic: "Professional Development"
-    }
-  ]
+      topic: "Professional Development",
+    },
+  ],
 };
 
-// AI-generated improvement suggestions based on weak areas
 export const improvementSuggestions = {
   "ML Fundamentals": {
     tips: [
       "Start with clear definitions and visual diagrams showing the differences between learning types",
       "Use real-world examples like spam detection (supervised) vs customer segmentation (unsupervised)",
-      "Provide hands-on coding exercises to reinforce concepts"
+      "Provide hands-on coding exercises to reinforce concepts",
     ],
     resources: [
       "Andrew Ng's Machine Learning course on Coursera",
-      "Interactive ML visualizations at https://seeing-theory.brown.edu/"
-    ]
+      "Interactive ML visualizations at https://seeing-theory.brown.edu/",
+    ],
   },
   "Classification Algorithms": {
     tips: [
       "Use decision tree visualizations to show how algorithms make decisions",
       "Compare multiple algorithms side-by-side with the same dataset",
-      "Include practical case studies from industry applications"
+      "Include practical case studies from industry applications",
     ],
     resources: [
       "Scikit-learn documentation with examples",
-      "Kaggle competitions for practical experience"
-    ]
+      "Kaggle competitions for practical experience",
+    ],
   },
   "Model Evaluation": {
     tips: [
       "Use confusion matrices and ROC curves to visualize performance",
       "Teach the trade-offs between different metrics",
-      "Provide examples of when each metric is most appropriate"
+      "Provide examples of when each metric is most appropriate",
     ],
     resources: [
       "Google's ML Crash Course on model evaluation",
-      "Interactive metric calculators and visualizations"
-    ]
+      "Interactive metric calculators and visualizations",
+    ],
   },
   "Model Validation": {
     tips: [
       "Demonstrate k-fold cross-validation with visual diagrams",
       "Show examples of overfitting vs proper validation",
-      "Include coding labs with validation techniques"
+      "Include coding labs with validation techniques",
     ],
     resources: [
       "Cross-validation tutorials on DataCamp",
-      "Scikit-learn cross-validation guide"
-    ]
+      "Scikit-learn cross-validation guide",
+    ],
   },
   "Evaluation Metrics": {
     tips: [
       "Explain when to use accuracy vs precision/recall/F1",
       "Use confusion matrix examples with imbalanced datasets",
-      "Show real business impact of choosing wrong metrics"
+      "Show real business impact of choosing wrong metrics",
     ],
     resources: [
       "Towards Data Science articles on metrics",
-      "Interactive metric comparison tools"
-    ]
+      "Interactive metric comparison tools",
+    ],
   },
-  "Optimization": {
+  Optimization: {
     tips: [
       "Use 3D surface plots to visualize gradient descent",
       "Animate the optimization process step-by-step",
-      "Compare different optimization algorithms practically"
+      "Compare different optimization algorithms practically",
     ],
     resources: [
       "3Blue1Brown neural network series",
-      "TensorFlow optimization tutorials"
-    ]
+      "TensorFlow optimization tutorials",
+    ],
   },
-  "Regularization": {
+  Regularization: {
     tips: [
       "Show visual comparisons of models with/without regularization",
       "Explain L1 vs L2 regularization with practical examples",
-      "Demonstrate impact on model complexity"
+      "Demonstrate impact on model complexity",
     ],
     resources: [
       "Regularization techniques on Fast.ai",
-      "Scikit-learn regularization examples"
-    ]
+      "Scikit-learn regularization examples",
+    ],
   },
   "Teaching Methods": {
     tips: [
       "Incorporate more interactive activities like think-pair-share",
       "Use problem-based learning scenarios",
-      "Encourage peer teaching and group discussions"
+      "Encourage peer teaching and group discussions",
     ],
     resources: [
       "Pedagogy books on active learning strategies",
-      "Workshop on interactive teaching methods"
-    ]
+      "Workshop on interactive teaching methods",
+    ],
   },
   "Concept Clarity": {
     tips: [
       "Use analogies and metaphors to explain complex ideas",
       "Break topics into smaller chunks with checkpoints",
-      "Provide multiple examples from different contexts"
+      "Provide multiple examples from different contexts",
     ],
     resources: [
       "Bloom's Taxonomy for structured learning",
-      "Cognitive load theory for better explanation"
-    ]
+      "Cognitive load theory for better explanation",
+    ],
   },
   "Student Engagement": {
     tips: [
       "Start classes with thought-provoking questions",
       "Use multimedia and interactive tools",
-      "Relate content to current events and student interests"
+      "Relate content to current events and student interests",
     ],
     resources: [
       "Edutopia engagement strategies",
-      "Technology tools like Kahoot, Mentimeter"
-    ]
-  }
+      "Technology tools like Kahoot, Mentimeter",
+    ],
+  },
 };
