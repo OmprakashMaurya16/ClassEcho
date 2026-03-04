@@ -15,6 +15,10 @@ app.use(
   }),
 );
 
+import authRoutes from "./routes/auth.routes.js";
+
+app.use("/api/auth", authRoutes);
+
 app.get("/", (req, res) => {
   res.status(200).json({
     success: true,

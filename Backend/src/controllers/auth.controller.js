@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import User from "../models/user.model.js";
 import asyncHandler from "../utils/async.handler.js";
 import ApiError from "../utils/api.error.js";
-import sendResponse from "../utils/send.response.js";
+import sendResponse from "../utils/response.helper.js";
 import {
   generateAccessToken,
   generateRefreshToken,
@@ -74,7 +74,7 @@ const refreshToken = asyncHandler(async (req, res) => {
   });
 });
 
-export const getMe = asyncHandler(async (req, res) => {
+const getMe = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user.id);
 
   if (!user) {

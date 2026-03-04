@@ -15,7 +15,7 @@ const authMiddleware = asyncHandler(async (req, res, next) => {
   let decoded;
 
   try {
-    decode = jwt.verify(token, process.env.JWT_SECRET);
+    decoded = jwt.verify(token, process.env.JWT_SECRET);
   } catch (error) {
     throw new ApiError(401, "Invalid token");
   }
