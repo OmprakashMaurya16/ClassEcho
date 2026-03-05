@@ -1,21 +1,30 @@
 import mongoose from "mongoose";
 
 const departmentSchema = new mongoose.Schema(
-   {
-      name: {
-         type: String,
-         enum: ["INFT", "CMPN", "EXCS", "EXTC", "BIOM"],
-         required: [true, "Department name is required"],
-         unique: true,
-      },
+  {
+    name: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+    },
 
-      hodUserId: {
-         type: mongoose.Schema.Types.ObjectId,
-         ref: "User",
-         required: [true, "HOD is required for the department"],
-      },
-   },
-   { timestamps: true }
+    code: {
+      type: String,
+      required: true,
+      unique: true,
+      enum: ["CMPN", "INFT", "EXTC", "EXCS", "BIOMD"],
+    },
+
+    hod: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
+  },
+  {
+    timestamps: true,
+  },
 );
 
 const Department = mongoose.model("Department", departmentSchema);
