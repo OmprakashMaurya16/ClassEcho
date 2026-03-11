@@ -138,8 +138,7 @@ const Login = () => {
                   type="button"
                   onClick={() => setShowPassword((v) => !v)}
                   className="text-gray-400 hover:text-blue-600"
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                >
+                  aria-label={showPassword ? "Hide password" : "Show password"}>
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               }
@@ -151,8 +150,7 @@ const Login = () => {
             </div>
             <button
               type="submit"
-              className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg text-sm shadow transition-colors duration-150"
-            >
+              className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg text-sm shadow transition-colors duration-150">
               <ArrowRight size={18} />
               Secure Login
             </button>

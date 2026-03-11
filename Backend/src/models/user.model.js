@@ -38,10 +38,20 @@ const userSchema = new mongoose.Schema(
       required: true,
     },
 
-    departmentId: {
+    department: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Department",
       default: null,
+    },
+
+    subjects: {
+      type: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Subject",
+        },
+      ],
+      default: [],
     },
 
     isActive: {
@@ -51,6 +61,11 @@ const userSchema = new mongoose.Schema(
 
     lastLogin: {
       type: Date,
+      default: null,
+    },
+
+    refreshToken: {
+      type: String,
       default: null,
     },
   },
@@ -64,8 +79,8 @@ userSchema.pre("save", async function () {
   this.password = await bcrypt.hash(this.password, salt);
 });
 
-userSchema.methods.comparePassword = async function (enteredPassword) {
-  return bcrypt.compare(enteredPassword, this.password);
+userSchema.methods.comparePassword = async function (password) {
+  return bcrypt.compare(password, this.password);
 };
 
 const User = mongoose.model("User", userSchema);

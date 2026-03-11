@@ -73,8 +73,7 @@ const HodDashboard = () => {
             </div>
             <button
               onClick={handleAddFaculty}
-              className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
-            >
+              className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
               <Plus size={18} />
               Add Faculty
             </button>
@@ -144,8 +143,7 @@ const HodDashboard = () => {
 
             <button
               onClick={handleAddFaculty}
-              className="bg-white rounded-xl shadow-sm p-6 border-2 border-dashed border-gray-200 hover:border-blue-400 hover:bg-blue-50 transition-all flex flex-col items-center justify-center min-h-50 group"
-            >
+              className="bg-white rounded-xl shadow-sm p-6 border-2 border-dashed border-gray-200 hover:border-blue-400 hover:bg-blue-50 transition-all flex flex-col items-center justify-center min-h-50 group">
               <div className="w-12 h-12 rounded-full bg-gray-100 group-hover:bg-blue-100 flex items-center justify-center mb-3 transition-colors">
                 <Plus
                   size={24}
