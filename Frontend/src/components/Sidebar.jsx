@@ -3,13 +3,13 @@ import {
   Users,
   User,
   LogOut,
-  GraduationCap,
   Menu,
   X,
   LayoutDashboard,
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
+import logo from "../assets/vit.png"
 
 const NAV = {
   Admin: [
@@ -36,24 +36,11 @@ const NAV = {
       path: "/hod/feedback",
     },
   ],
-  Faculty: [
-    {
-      label: "Dashboard",
-      icon: <LayoutDashboard size={17} />,
-      path: "/faculty/dashboard",
-    },
-    {
-      label: "My Feedback",
-      icon: <User size={17} />,
-      path: "/faculty/feedback",
-    },
-  ],
 };
 
 const AVATAR = {
   Admin: { letter: "AD", bg: "bg-orange-100", text: "text-orange-700" },
   HOD: { letter: "H", bg: "bg-emerald-100", text: "text-emerald-700" },
-  Faculty: { letter: "F", bg: "bg-violet-100", text: "text-violet-700" },
 };
 
 const Sidebar = () => {
@@ -80,9 +67,7 @@ const Sidebar = () => {
     <>
       
       <div className="flex items-center gap-2.5 px-5 py-5 border-b border-gray-100">
-        <div className="rounded-lg bg-blue-100 p-2 shrink-0">
-          <GraduationCap size={19} color="#2563EB" />
-        </div>
+        <img src={logo} alt="College Logo" className="w-36 h-15 object-cover" />
         <span
           className="font-bold text-gray-800"
           style={{ fontSize: "clamp(0.9rem, 1.8vw, 1.05rem)" }}>

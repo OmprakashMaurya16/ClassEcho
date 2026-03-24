@@ -8,6 +8,8 @@ import AdminDashboard   from "./pages/AdminDashboard";
 import HodDashboard     from "./pages/HodDashboard";
 import FacultyDashboard from "./pages/FacultyDashboard";
 import ManageFaculty from "./pages/ManageFaculty";
+import GenerateQR from "./pages/GenerateQR";
+import FacultyAnalytics from "./pages/FacultyAnalytics";
 
 
 const PublicRoute = () => {
@@ -43,6 +45,8 @@ const App = () => (
         
         <Route element={<ProtectedRoute allowedRole="Faculty" />}>
           <Route path="/faculty/dashboard" element={<FacultyDashboard />} />
+          <Route path="/faculty/generate-qr" element={<GenerateQR />}/>
+          <Route path="/faculty/analytics" element={<FacultyAnalytics />} />
         </Route>
 
         
