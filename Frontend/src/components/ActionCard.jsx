@@ -39,7 +39,7 @@ const ActionCard = ({
 
         <button
           onClick={onClick}
-          className={`mt-5 w-full flex items-center justify-center gap-2 py-2.5 sm:py-3 font-semibold rounded-xl transition ${buttonStyle}`}
+          className={`mt-5 w-full flex items-center justify-center gap-2 py-2.5 sm:py-3 font-semibold rounded-xl transition cursor-pointer ${buttonStyle}`}
         >
           <Icon size={16} /> {buttonText}
         </button>

@@ -40,6 +40,7 @@ const App = () => (
         
         <Route element={<ProtectedRoute allowedRole="HOD" />}>
           <Route path="/hod/dashboard" element={<HodDashboard />} />
+          <Route path="/hod/faculty/:id/analytics" element={<FacultyAnalytics />} />
         </Route>
 
         

@@ -63,7 +63,7 @@ const Login = () => {
           </div>
           
           <h1
-            className="font-bold text-gray-800 leading-tight"
+            className="font-bold text-[#170a89] leading-tight"
             style={{ fontSize: "clamp(1rem, 2.5vw, 1.25rem)" }}>
             Vidyalankar Institute of Technology
           </h1>

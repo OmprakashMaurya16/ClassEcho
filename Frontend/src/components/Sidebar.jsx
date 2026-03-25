@@ -1,7 +1,6 @@
 import { useState } from "react";
 import {
   Users,
-  User,
   LogOut,
   Menu,
   X,
@@ -24,23 +23,10 @@ const NAV = {
       path: "/admin/manage-faculty",
     },
   ],
-  HOD: [
-    {
-      label: "Dashboard",
-      icon: <LayoutDashboard size={17} />,
-      path: "/hod/dashboard",
-    },
-    {
-      label: "Faculty Feedback",
-      icon: <User size={17} />,
-      path: "/hod/feedback",
-    },
-  ],
 };
 
 const AVATAR = {
   Admin: { letter: "AD", bg: "bg-orange-100", text: "text-orange-700" },
-  HOD: { letter: "H", bg: "bg-emerald-100", text: "text-emerald-700" },
 };
 
 const Sidebar = () => {
@@ -69,7 +55,7 @@ const Sidebar = () => {
       <div className="flex items-center gap-2.5 px-5 py-5 border-b border-gray-100">
         <img src={logo} alt="College Logo" className="w-36 h-15 object-cover" />
         <span
-          className="font-bold text-gray-800"
+          className="font-bold text-[#170a89]"
           style={{ fontSize: "clamp(0.9rem, 1.8vw, 1.05rem)" }}>
           ClassEcho
         </span>

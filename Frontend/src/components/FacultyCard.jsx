@@ -1,5 +1,5 @@
 
-import { BookOpen, Pencil, Trash2 } from "lucide-react";
+import { BookOpen, Pencil, Trash2, ChevronRight } from "lucide-react";
 const DEPT_COLOURS = {
   INFT:  { bg: "bg-emerald-100", text: "text-emerald-700", badge: "text-emerald-600" },
   CMPN:  { bg: "bg-violet-100",  text: "text-violet-700",  badge: "text-violet-600"  },
@@ -24,8 +24,10 @@ const FacultyCard = ({
   faculty,
   showActions = true,
   onSubjects = () => {},
-  onEdit     = () => {},
-  onDelete   = () => {},
+  onEdit = () => {},
+  onDelete = () => {},
+  showViewDetails = false,   
+  onViewDetails = () => {}, 
 }) => {
   const colours      = deptColour(faculty.department);
   const abbr         = initials(faculty.fullName);
@@ -45,15 +47,15 @@ const FacultyCard = ({
         {showActions && (
           <div className="flex items-center gap-0.5   shrink-0">
             <button onClick={() => onSubjects(faculty)} title="Subjects"
-              className="p-1.5 sm:p-2 rounded-lg text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition">
+              className="p-1.5 sm:p-2 rounded-lg text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition cursor-pointer">
               <BookOpen style={{ width: "clamp(13px, 1.3vw, 16px)", height: "clamp(13px, 1.3vw, 16px)" }} />
             </button>
             <button onClick={() => onEdit(faculty)} title="Edit"
-              className="p-1.5 sm:p-2 rounded-lg text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 transition">
+              className="p-1.5 sm:p-2 rounded-lg text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 transition cursor-pointer">
               <Pencil style={{ width: "clamp(13px, 1.3vw, 16px)", height: "clamp(13px, 1.3vw, 16px)" }} />
             </button>
             <button onClick={() => onDelete(faculty)} title="Delete"
-              className="p-1.5 sm:p-2 rounded-lg text-gray-400 hover:text-rose-500 hover:bg-rose-50 transition">
+              className="p-1.5 sm:p-2 rounded-lg text-gray-400 hover:text-rose-500 hover:bg-rose-50 transition cursor-pointer">
               <Trash2 style={{ width: "clamp(13px, 1.3vw, 16px)", height: "clamp(13px, 1.3vw, 16px)" }} />
             </button>
           </div>
@@ -84,6 +86,15 @@ const FacultyCard = ({
           </p>
         )}
       </div>
+      {showViewDetails && (
+        <button
+          onClick={() => onViewDetails(faculty)}
+          className="mt-auto w-full flex items-center justify-center gap-1.5 py-2.5 bg-gray-50 border-t border-gray-100 rounded-xl text-gray-600 font-medium hover:bg-indigo-50 hover:text-indigo-600 transition"
+          style={{ fontSize: "clamp(0.75rem, 1.4vw, 0.85rem)" }}
+        >
+          View Details <ChevronRight size={14} />
+        </button>
+      )}
     </div>
   );
 };

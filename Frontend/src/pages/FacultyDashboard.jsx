@@ -109,7 +109,7 @@ const FacultyDashboard = () => {
               />
 
               {/* Text */}
-              <span className="font-bold text-gray-800 text-sm sm:text-lg md:text-base lg:text-xl truncate">
+              <span className="font-bold text-[#170a89] text-sm sm:text-lg md:text-base lg:text-xl truncate">
                 ClassEcho
               </span>
             </div>
