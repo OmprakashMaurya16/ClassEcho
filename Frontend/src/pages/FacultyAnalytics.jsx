@@ -8,12 +8,13 @@
 //   GET /api/faculty/analytics?subjectId=<id|"overall">&filter=<weekly|monthly|semesterly>
 //     → {
 //         overallScore: number (out of 10),
-//         trend: [{ label, score, deptAvg }],
-//         parameters: [{ label, score, max }],
-//         sentiment: { positive, neutral, negative },  // percentages
-//         comments: [{ _id, text, sentiment, date, initials }]
+//         trend:        [{ label, score, deptAvg }],
+//         parameters:   [{ label, score, max }],
+//         sentiment:    { positive, neutral, negative },   // percentages
+//         comments:     [{ _id, text, sentiment, date, initials }]
 //       }
 // ─────────────────────────────────────────────────────────────────────────────
+
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -30,9 +31,12 @@ import TimelineChart from "../components/TimelineChart";
 import HBar from "../components/HBar";
 import PieChart from "../components/PieChart";
 import CommentCard from "../components/CommentCard";
-import logo from "../assets/vit.png"
+import Header from "../components/Header";
 
-// ── MOCK DATA ─────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// MOCK DATA
+// Replace each usage of MOCK_* with your API fetch results.
+// ─────────────────────────────────────────────────────────────────────────────
 const MOCK_SUBJECTS = [
   { _id: "overall", name: "Overall", code: "" },
   { _id: "sub1", name: "Thermodynamics II", code: "ME401" },
@@ -158,28 +162,26 @@ const MOCK_ANALYTICS = {
     ],
   },
 };
-// Fill in missing subjects with overall data as fallback
 ["sub2", "sub3"].forEach((id) => {
   MOCK_ANALYTICS[id] = MOCK_ANALYTICS.overall;
 });
 
-// ── SENTIMENT COLOURS ────────────────────────────────────────────────────────
-const SENT_COLOUR = {
-  Positive: "bg-green-100 text-green-700",
-  Constructive: "bg-yellow-100 text-yellow-700",
-  Negative: "bg-red-100 text-red-600",
-};
-const SENT_PIE = {
-  positive: "#22c55e",
-  neutral: "#facc15",
-  negative: "#ef4444",
-};
+// ─────────────────────────────────────────────────────────────────────────────
+// HELPERS
+// ─────────────────────────────────────────────────────────────────────────────
+const getInitials = (name = "") =>
+  name
+    .split(" ")
+    .filter((w) => w && !["Dr.", "Prof.", "Mr.", "Mrs.", "Ms."].includes(w))
+    .map((w) => w[0])
+    .join("")
+    .toUpperCase();
 
 // ─────────────────────────────────────────────────────────────────────────────
-// ROOT
+// COMPONENT
 // ─────────────────────────────────────────────────────────────────────────────
 const FacultyAnalytics = () => {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   const [subjects, setSubjects] = useState(MOCK_SUBJECTS);
@@ -189,108 +191,74 @@ const FacultyAnalytics = () => {
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef(null);
 
-  // ── Fetch analytics when subject or filter changes ──────────────────────
-  // API INTEGRATION: replace mock lookup with:
+  // ── Fetch analytics whenever subject or filter changes ───────────────────
+  // API INTEGRATION — replace the mock setTimeout below with:
+  //
   //   const token = JSON.parse(sessionStorage.getItem("vit_user") ?? "{}")?.token;
-  //   fetch(`/api/faculty/analytics?subjectId=${activeSubj}&filter=${filter}`, { headers: { Authorization: `Bearer ${token}` } })
-  //     .then(r => r.json()).then(setAnalytics);
+  //   fetch(
+  //     `/api/faculty/analytics?subjectId=${activeSubj}&filter=${filter}`,
+  //     { headers: { Authorization: `Bearer ${token}` } }
+  //   )
+  //     .then((r) => r.json())
+  //     .then(setAnalytics)
+  //     .catch(console.error)
+  //     .finally(() => setLoading(false));
   useEffect(() => {
     setLoading(true);
-    setTimeout(() => {
+    const t = setTimeout(() => {
       setAnalytics(MOCK_ANALYTICS[activeSubj] ?? MOCK_ANALYTICS.overall);
       setLoading(false);
-    }, 400); // simulate network
+    }, 400);
+    return () => clearTimeout(t);
   }, [activeSubj, filter]);
 
-  // useEffect(() => {
-  //   const token = JSON.parse(sessionStorage.getItem("vit_user") ?? "{}")?.token;
-  //   fetch("/api/faculty/subjects", { headers: { Authorization: `Bearer ${token}` } })
-  //     .then(r => r.json()).then(d => setSubjects([{ _id:"overall", name:"Overall", code:"" }, ...d.subjects]));
-  // }, []);
+  // ── Fetch subjects list on mount ─────────────────────────────────────────
+  // API INTEGRATION — replace mock with:
+  //
+  //   useEffect(() => {
+  //     const token = JSON.parse(sessionStorage.getItem("vit_user") ?? "{}")?.token;
+  //     fetch("/api/faculty/subjects", { headers: { Authorization: `Bearer ${token}` } })
+  //       .then((r) => r.json())
+  //       .then((d) => setSubjects([{ _id: "overall", name: "Overall", code: "" }, ...d.subjects]));
+  //   }, []);
 
-  const getInitials = (name = "") => {
-  return name
-    .split(" ")
-    .filter(word => word && !["Dr.", "Prof.", "Mr.", "Mrs.", "Ms."].includes(word))
-    .map(word => word[0])
-    .join("")
-    .toUpperCase();
-};
-
-const initials = getInitials(user?.name);
-
-  const handleLogout = () => {
-    logout();
-    navigate("/login", { replace: true });
-  };
   const activeSubjectLabel =
     subjects.find((s) => s._id === activeSubj)?.name ?? "Overall";
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      {/* ── Navbar ─────────────────────────────────────────────────────── */}
-      <header className="bg-white border-b border-gray-100 sticky top-0 z-20">
-              <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex items-center justify-between h-14 sm:h-16">
-                  {/* Left: Logo */}
-                  <div className="flex items-center gap-0.5 sm:gap-1 min-w-0">
-                    {/* Logo */}
-                    <img
-                      src={logo}
-                      alt="College Logo"
-                      className="h-7 sm:h-9 md:h-11 lg:h-12 w-auto object-contain shrink-0"
-                    />
-      
-                    {/* Text */}
-                    <span className="font-bold text-[#170a89] text-sm sm:text-lg md:text-base lg:text-xl truncate">
-                      ClassEcho
-                    </span>
-                  </div>
-      
-                  {/* Right: Profile + Logout */}
-                  <div className="flex items-center gap-2 sm:gap-4">
-                    {/* Avatar */}
-                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-xs sm:text-sm">
-                      {initials || "F"}
-                    </div>
-      
-                    {/* Logout button */}
-                    <button
-                      onClick={handleLogout}
-                      className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm text-gray-500 hover:text-red-500 hover:bg-gray-50 rounded-lg transition cursor-pointer"
-                    >
-                      <LogOut size={16} />
-                      <span className="hidden sm:inline">Logout</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </header>
+  const scorePercent = ((analytics?.overallScore ?? 0) / 10) * 100;
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        {/* Page heading */}
-        <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <button
-              onClick={() => navigate("/faculty/dashboard")}
-              className="flex items-center gap-1 text-gray-400 hover:text-blue-600 transition mb-2 cursor-pointer"
-              style={{ fontSize: "clamp(0.72rem,1.4vw,0.8rem)" }}
-            >
-              <ChevronLeft size={14} /> Dashboard
-            </button>
-            <h1
-              className="font-extrabold text-gray-900"
-              style={{ fontSize: "clamp(1.3rem,3vw,1.75rem)" }}
-            >
-              Performance Analytics
-            </h1>
-            <p
-              className="text-gray-400 mt-0.5"
-              style={{ fontSize: "clamp(0.72rem,1.4vw,0.8rem)" }}
-            >
-              {user?.department} · {new Date().getFullYear()}
-            </p>
-          </div>
+  const initials = getInitials(user?.name);
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // RENDER
+  // ─────────────────────────────────────────────────────────────────────────
+  return (
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      <Header initials={initials} />
+
+      {/* ── PAGE CONTENT ─────────────────────────────────────────────────── */}
+      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        {/* Back + heading */}
+        <div className="mb-6">
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-1 text-gray-400 hover:text-blue-600 transition mb-2 cursor-pointer"
+            style={{ fontSize: "clamp(0.72rem, 1.4vw, 0.8rem)" }}
+          >
+            <ChevronLeft size={14} /> Back
+          </button>
+          <h1
+            className="font-bold text-gray-700"
+            style={{ fontSize: "clamp(1.3rem, 3vw, 1.75rem)" }}
+          >
+            Performance Analytics
+          </h1>
+          <p
+            className="text-gray-400 mt-0.5"
+            style={{ fontSize: "clamp(0.72rem, 1.4vw, 0.8rem)" }}
+          >
+            {user?.department} · {new Date().getFullYear()}
+          </p>
         </div>
 
         {/* ── Subject filter — horizontal scroll ─────────────────────── */}
@@ -308,29 +276,30 @@ const initials = getInitials(user?.name);
                   ? "bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-200"
                   : "bg-white text-gray-600 border-gray-200 hover:border-blue-300 hover:text-blue-600"
               }`}
-              style={{ fontSize: "clamp(0.75rem,1.4vw,0.875rem)" }}
+              style={{ fontSize: "clamp(0.75rem, 1.4vw, 0.875rem)" }}
             >
               {s.name}
             </button>
           ))}
         </div>
 
-        {/* ── Content: 80% left + 20% right ─────────────────────────── */}
+        {/* ── Main layout: left (80%) + right sidebar (20%) ────────────── */}
         <div className="flex flex-col lg:flex-row gap-5">
-          {/* ── LEFT COLUMN (80%) ─────────────────────────────────────── */}
-          <div className="flex-1 space-y-5" style={{ minWidth: 0 }}>
-            {/* Trend chart */}
+          {/* ══ LEFT COLUMN ══════════════════════════════════════════════ */}
+          <div className="flex-1 min-w-0 space-y-5">
+            {/* 1. Trend chart */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 sm:p-6">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
                 <div className="flex items-center gap-2">
                   <TrendingUp size={17} className="text-blue-600" />
                   <h2
                     className="font-bold text-gray-800"
-                    style={{ fontSize: "clamp(0.9rem,1.8vw,1.05rem)" }}
+                    style={{ fontSize: "clamp(0.9rem, 1.8vw, 1.05rem)" }}
                   >
                     Weekly Performance Trend
                   </h2>
                 </div>
+
                 {/* Filter pills */}
                 <div className="flex gap-1.5">
                   {["weekly", "monthly", "semesterly"].map((f) => (
@@ -342,38 +311,36 @@ const initials = getInitials(user?.name);
                           ? "bg-blue-600 text-white"
                           : "bg-gray-100 text-gray-500 hover:bg-gray-200"
                       }`}
-                      style={{ fontSize: "clamp(0.65rem,1.2vw,0.75rem)" }}
+                      style={{ fontSize: "clamp(0.65rem, 1.2vw, 0.75rem)" }}
                     >
                       {f}
                     </button>
                   ))}
                 </div>
               </div>
-              {/* Legend */}
-              <div className="flex gap-4 mb-3">
+
+              {/* Chart legend */}
+              <div className="flex gap-5 mb-3">
                 <div className="flex items-center gap-1.5">
-                  <div className="w-3 h-0.5 bg-blue-600" />
+                  <div className="w-5 h-0.5 bg-blue-600 rounded-full" />
                   <span
                     className="text-gray-500"
-                    style={{ fontSize: "clamp(0.65rem,1.2vw,0.75rem)" }}
+                    style={{ fontSize: "clamp(0.65rem, 1.2vw, 0.75rem)" }}
                   >
                     You
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <div
-                    className="w-3 h-0.5 bg-gray-300"
-                    style={{ borderTop: "2px dashed #d1d5db", height: 0 }}
-                  />
-                  <div className="w-3 border-t-2 border-dashed border-gray-300" />
+                  <div className="w-5 border-t-2 border-dashed border-gray-300" />
                   <span
                     className="text-gray-500"
-                    style={{ fontSize: "clamp(0.65rem,1.2vw,0.75rem)" }}
+                    style={{ fontSize: "clamp(0.65rem, 1.2vw, 0.75rem)" }}
                   >
                     Dept Avg
                   </span>
                 </div>
               </div>
+
               {loading ? (
                 <div className="h-32 bg-gray-50 rounded-xl animate-pulse" />
               ) : (
@@ -381,22 +348,24 @@ const initials = getInitials(user?.name);
               )}
             </div>
 
-            {/* Parameter bars + Sentiment donut — side by side on md+ */}
+            {/* 2. Parameter bars (left) + Student Comments (right) ─────── */}
+            {/*    CHANGED: comments moved here, pie chart moved to right sidebar */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {/* Parameter Analysis */}
+              {/* 2a. Parameter Analysis */}
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 sm:p-6">
                 <div className="flex items-center gap-2 mb-4">
                   <BarChart2 size={17} className="text-blue-600" />
                   <h2
                     className="font-bold text-gray-800"
-                    style={{ fontSize: "clamp(0.9rem,1.8vw,1.05rem)" }}
+                    style={{ fontSize: "clamp(0.9rem, 1.8vw, 1.05rem)" }}
                   >
                     Parameter Analysis
                   </h2>
                 </div>
+
                 {loading ? (
                   <div className="space-y-3">
-                    {[1, 2, 3, 4, 5, 6, 7].map((i) => (
+                    {Array.from({ length: 7 }).map((_, i) => (
                       <div
                         key={i}
                         className="h-6 bg-gray-100 rounded animate-pulse"
@@ -404,173 +373,196 @@ const initials = getInitials(user?.name);
                     ))}
                   </div>
                 ) : (
-                  analytics?.parameters.map((p) => <HBar {...p} />)
+                  analytics?.parameters.map((p) => (
+                    <HBar key={p.label} {...p} />
+                  ))
                 )}
               </div>
 
-              {/* Sentiment Analysis */}
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 sm:p-6">
-                <div className="flex items-center gap-2 mb-4">
-                  <MessageSquare size={17} className="text-blue-600" />
-                  <h2
-                    className="font-bold text-gray-800"
-                    style={{ fontSize: "clamp(0.9rem,1.8vw,1.05rem)" }}
-                  >
-                    Sentiment Analysis
-                  </h2>
-                </div>
-                {loading ? (
-                  <div className="h-40 bg-gray-50 rounded-xl animate-pulse" />
-                ) : (
-                  <div className="flex flex-col items-center gap-5">
-                    <PieChart data={analytics?.sentiment} />
-
-                    {/* Single correct legend */}
-                    <div className="flex gap-4 flex-wrap justify-center">
-                      {[
-                        {
-                          label: "Positive",
-                          color: "bg-green-400",
-                          val: analytics?.sentiment?.positive,
-                        },
-                        {
-                          label: "Neutral",
-                          color: "bg-yellow-400",
-                          val: analytics?.sentiment?.neutral,
-                        },
-                        {
-                          label: "Negative",
-                          color: "bg-red-400",
-                          val: analytics?.sentiment?.negative,
-                        },
-                      ].map((item) => (
-                        <div
-                          key={item.label}
-                          className="flex items-center gap-2"
-                        >
-                          <span
-                            className={`w-3 h-3 rounded-full ${item.color}`}
-                          />
-                          <span className="text-sm text-gray-600">
-                            {item.label} ({item.val ?? 0}%)
-                          </span>
-                        </div>
-                      ))}
-                    </div>
+              {/* 2b. Student Comments — MOVED from right sidebar to here */}
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 sm:p-6 flex flex-col">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <MessageSquare size={17} className="text-blue-600" />
+                    <h2
+                      className="font-bold text-gray-800"
+                      style={{ fontSize: "clamp(0.9rem, 1.8vw, 1.05rem)" }}
+                    >
+                      Student Feedback
+                    </h2>
                   </div>
+                  <span
+                    className="text-gray-400 font-medium"
+                    style={{ fontSize: "clamp(0.65rem, 1.2vw, 0.72rem)" }}
+                  >
+                    Latest
+                  </span>
+                </div>
+
+                {loading ? (
+                  <div className="space-y-3">
+                    {Array.from({ length: 3 }).map((_, i) => (
+                      <div
+                        key={i}
+                        className="h-16 bg-gray-50 rounded-xl animate-pulse"
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="divide-y divide-gray-50 flex-1">
+                    {(analytics?.comments ?? []).slice(0, 5).map((c, i) => (
+                      <div key={c._id} className={i > 0 ? "pt-3 mt-3" : ""}>
+                        <CommentCard {...c} />
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {(analytics?.comments?.length ?? 0) > 5 && (
+                  <button
+                    className="mt-4 text-center text-blue-600 font-semibold hover:underline"
+                    style={{ fontSize: "clamp(0.72rem, 1.3vw, 0.8rem)" }}
+                  >
+                    View All Comments →
+                  </button>
                 )}
               </div>
             </div>
           </div>
 
-          {/* ── RIGHT COLUMN (20%) — Score + Comments ──────────────────── */}
-          <div className="w-full lg:w-64 xl:w-72 shrink-0 space-y-4">
-            {/* Overall Score */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-              <div className="flex items-center gap-2 mb-4">
-                <Star size={16} className="text-yellow-500 fill-yellow-500" />
+          {/* ══ RIGHT SIDEBAR ════════════════════════════════════════════ */}
+          <div className="w-full lg:w-60 xl:w-64 shrink-0 space-y-4">
+            {/* 1. Overall Score — REDUCED size */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <Star size={15} className="text-yellow-500 fill-yellow-500" />
                 <h3
                   className="font-bold text-gray-800"
-                  style={{ fontSize: "clamp(0.85rem,1.6vw,0.95rem)" }}
+                  style={{ fontSize: "clamp(0.82rem, 1.5vw, 0.9rem)" }}
                 >
                   Overall Score
                 </h3>
               </div>
+
               {loading ? (
-                <div className="h-20 bg-gray-50 rounded-xl animate-pulse" />
+                <div className="h-16 bg-gray-50 rounded-xl animate-pulse" />
               ) : (
-                <div className="text-center py-3">
-                  <div
-                    className="font-extrabold text-blue-600 leading-none"
-                    style={{ fontSize: "clamp(2.5rem,6vw,3.5rem)" }}
-                  >
-                    {analytics?.overallScore ?? "—"}
+                <div className="flex items-center gap-4">
+                  {/* Big number — smaller than before */}
+                  <div className="shrink-0">
+                    <span
+                      className="font-extrabold text-blue-600 leading-none"
+                      style={{ fontSize: "clamp(2rem, 4vw, 2.5rem)" }}
+                    >
+                      {analytics?.overallScore ?? "—"}
+                    </span>
+                    <pre
+                      className="text-gray-400 block"
+                      style={{ fontSize: "clamp(0.62rem, 1.1vw, 0.7rem)" }}
+                    >
+                      / 10
+                    </pre>
                   </div>
-                  <div
-                    className="text-gray-400 mt-1"
-                    style={{ fontSize: "clamp(0.72rem,1.3vw,0.8rem)" }}
-                  >
-                    out of 10
-                  </div>
-                  <div
-                    className="mt-3 w-full bg-gray-100 rounded-full overflow-hidden"
-                    style={{ height: 8 }}
-                  >
+
+                  {/* Progress bar + subject label */}
+                  <div className="flex-1 min-w-0">
                     <div
-                      className="h-full rounded-full bg-linear-to-r from-blue-400 to-blue-600 transition-all duration-700"
-                      style={{
-                        width: `${(analytics?.overallScore / 10) * 100}%`,
-                      }}
-                    />
+                      className="w-full bg-gray-100 rounded-full overflow-hidden mb-1"
+                      style={{ height: 6 }}
+                    >
+                      <div
+                        className="h-full rounded-full bg-linear-to-r from-blue-400 to-blue-600 transition-all duration-700"
+                        style={{ width: `${scorePercent}%` }}
+                      />
+                    </div>
+                    <div
+                      className="flex justify-between text-gray-300"
+                      style={{ fontSize: "clamp(0.55rem, 1vw, 0.62rem)" }}
+                    >
+                      <span>0</span>
+                      <span>10</span>
+                    </div>
+                    <p
+                      className="text-gray-500 mt-1 truncate"
+                      style={{ fontSize: "clamp(0.62rem, 1.1vw, 0.7rem)" }}
+                    >
+                      {activeSubjectLabel}
+                    </p>
                   </div>
-                  <div
-                    className="flex justify-between mt-1 text-gray-300"
-                    style={{ fontSize: "clamp(0.6rem,1.1vw,0.68rem)" }}
-                  >
-                    <span>0</span>
-                    <span>10</span>
-                  </div>
-                  <p
-                    className="text-gray-500 mt-2"
-                    style={{ fontSize: "clamp(0.68rem,1.2vw,0.75rem)" }}
-                  >
-                    {activeSubjectLabel}
-                  </p>
                 </div>
               )}
             </div>
 
-            {/* Student Comments */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <MessageSquare size={16} className="text-blue-600" />
-                  <h3
-                    className="font-bold text-gray-800"
-                    style={{ fontSize: "clamp(0.85rem,1.6vw,0.95rem)" }}
-                  >
-                    Student Feedback
-                  </h3>
-                </div>
-                <span
-                  className="text-gray-400 font-medium"
-                  style={{ fontSize: "clamp(0.65rem,1.2vw,0.72rem)" }}
+            {/* 2. Sentiment Analysis — MOVED from left column to here */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-5">
+              <div className="flex items-center gap-2 mb-4">
+                <MessageSquare size={16} className="text-blue-600" />
+                <h3
+                  className="font-bold text-gray-800"
+                  style={{ fontSize: "clamp(0.82rem, 1.5vw, 0.9rem)" }}
                 >
-                  Latest
-                </span>
+                  Sentiment Analysis
+                </h3>
               </div>
 
               {loading ? (
-                <div className="space-y-3">
-                  {[1, 2, 3].map((i) => (
-                    <div
-                      key={i}
-                      className="h-16 bg-gray-50 rounded-xl animate-pulse"
-                    />
-                  ))}
-                </div>
+                <div className="h-36 bg-gray-50 rounded-xl animate-pulse" />
               ) : (
-                <div className="divide-y divide-gray-50">
-                  {(analytics?.comments ?? []).slice(0, 5).map((c, i) => (
-                    <div key={c._id} className={i > 0 ? "pt-3 mt-3" : ""}>
-                      <CommentCard {...c} />
-                    </div>
-                  ))}
-                </div>
-              )}
+                <div className="flex flex-col items-center gap-4">
+                  <PieChart data={analytics?.sentiment} />
 
-              {(analytics?.comments?.length ?? 0) > 5 && (
-                <button
-                  className="w-full mt-4 text-center text-blue-600 font-semibold hover:underline"
-                  style={{ fontSize: "clamp(0.72rem,1.3vw,0.8rem)" }}
-                >
-                  View All Comments →
-                </button>
+                  {/* Legend */}
+                  <div className="w-full space-y-1.5">
+                    {[
+                      {
+                        label: "Positive",
+                        color: "bg-green-400",
+                        val: analytics?.sentiment?.positive,
+                      },
+                      {
+                        label: "Neutral",
+                        color: "bg-yellow-400",
+                        val: analytics?.sentiment?.neutral,
+                      },
+                      {
+                        label: "Negative",
+                        color: "bg-red-400",
+                        val: analytics?.sentiment?.negative,
+                      },
+                    ].map((item) => (
+                      <div
+                        key={item.label}
+                        className="flex items-center justify-between"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span
+                            className={`w-2.5 h-2.5 rounded-full shrink-0 ${item.color}`}
+                          />
+                          <span
+                            className="text-gray-600"
+                            style={{
+                              fontSize: "clamp(0.68rem, 1.3vw, 0.78rem)",
+                            }}
+                          >
+                            {item.label}
+                          </span>
+                        </div>
+                        <span
+                          className="font-semibold text-gray-700"
+                          style={{ fontSize: "clamp(0.68rem, 1.3vw, 0.78rem)" }}
+                        >
+                          {item.val ?? 0}%
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               )}
             </div>
           </div>
         </div>
       </main>
+
       <Footer />
     </div>
   );

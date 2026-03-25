@@ -11,11 +11,11 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   QrCode, Download, ChevronLeft,
-  Loader2, Info, CheckCircle, AlertCircle, LogOut
+  Loader2, Info, CheckCircle, AlertCircle,
 } from "lucide-react";
 import { useAuth } from "../auth/AuthContext";
 import Footer from "../components/Footer";
-import logo from "../assets/vit.png"
+import Header from '../components/Header';
 
 // ── Mock subjects — replace with fetch /api/faculty/subjects ──────────────────
 const MOCK_SUBJECTS = [
@@ -27,7 +27,7 @@ const MOCK_SUBJECTS = [
 const FacultyDashboard = () => { };   // forward ref guard — unused
 
 const GenerateQR = () => {
-  const { user, logout }  = useAuth();
+  const { user }  = useAuth();
   const navigate  = useNavigate();
 
   const [subjects,    setSubjects]    = useState(MOCK_SUBJECTS);
@@ -89,54 +89,13 @@ const initials = getInitials(user?.name);
     setDownloaded(true);
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate("/login", { replace: true });
-  };
-
   const selectedSubject = subjects.find((s) => s._id === subjectId);
 
   return (
     <div className="min-h-screen bg-gray-50">
 
-      {/* ── Navbar ─────────────────────────────────────────────────────── */}
-      <header className="bg-white border-b border-gray-100 sticky top-0 z-20">
-              <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex items-center justify-between h-14 sm:h-16">
-                  {/* Left: Logo */}
-                  <div className="flex items-center gap-0.5 sm:gap-1 min-w-0">
-                    {/* Logo */}
-                    <img
-                      src={logo}
-                      alt="College Logo"
-                      className="h-7 sm:h-9 md:h-11 lg:h-12 w-auto object-contain shrink-0"
-                    />
-      
-                    {/* Text */}
-                    <span className="font-bold text-[#170a89] text-sm sm:text-lg md:text-base lg:text-xl truncate">
-                      ClassEcho
-                    </span>
-                  </div>
-      
-                  {/* Right: Profile + Logout */}
-                  <div className="flex items-center gap-2 sm:gap-4">
-                    {/* Avatar */}
-                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-xs sm:text-sm">
-                      {initials || "F"}
-                    </div>
-      
-                    {/* Logout button */}
-                    <button
-                      onClick={handleLogout}
-                      className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm text-gray-500 hover:text-red-500 hover:bg-gray-50 rounded-lg transition cursor-pointer"
-                    >
-                      <LogOut size={16} />
-                      <span className="hidden sm:inline">Logout</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </header>
+      <Header initials={initials} />
+
 
       {/* ── Main ───────────────────────────────────────────────────────── */}
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
@@ -148,8 +107,8 @@ const initials = getInitials(user?.name);
           <ChevronLeft size={16} /> Back to Dashboard
         </button>
 
-        <h1 className="font-extrabold text-gray-900 mb-1"
-          style={{ fontSize: "clamp(1.4rem, 3.5vw, 2rem)" }}>
+        <h1 className="font-bold text-gray-600 mb-1"
+          style={{ fontSize: "clamp(1.3rem,3vw,1.75rem)" }}>
           Generate Feedback QR
         </h1>
         <p className="text-blue-600 mb-8" style={{ fontSize: "clamp(0.78rem, 1.5vw, 0.9rem)" }}>

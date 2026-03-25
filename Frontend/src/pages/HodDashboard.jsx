@@ -1,4 +1,3 @@
-// ─────────────────────────────────────────────────────────────────────────────
 // HodDashboard.jsx
 //
 // API INTEGRATION POINTS:
@@ -9,20 +8,26 @@
 //     → { faculty: [...], total: number, totalPages: number }
 //     faculty shape: { _id, fullName, department, designation, role,
 //                      avgRating, subjects: [{ name }] }
-// ─────────────────────────────────────────────────────────────────────────────
+// 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Users, BarChart2, LogOut, Star, GraduationCap, } from "lucide-react";
+import {
+  Search,
+  Users,
+  BarChart2,
+  Star,
+  GraduationCap,
+} from "lucide-react";
 import { useAuth } from "../auth/AuthContext";
 import FacultyCard from "../components/FacultyCard";
 import Pagination from "../components/Pagination";
 import Footer from "../components/Footer";
-import logo from "../assets/vit.png";
+import Header from "../components/Header";
 
-// ── Constants ─────────────────────────────────────────────────────────────────
+// ── Constants 
 const PAGE_SIZE = 12;
 
-// ── Mock data — replace with API fetch ───────────────────────────────────────
+// ── Mock data — replace with API fetch 
 const MOCK_STATS = { totalFaculty: 48, deptAvgScore: 4.82 };
 
 const mk = (id, name, desig, subjects, rating) => ({
@@ -40,7 +45,7 @@ const MOCK_FACULTY = [
     1,
     "Dr. Ananya Sharma",
     "Associate Professor",
-    ["Cloud Computing & Virtualization"],
+    ["CC, Machine Learning, Data Feature Engineering"],
     4.9,
   ),
   mk(2, "Prof. Rahul Jha", "Head of Lab", ["Database Management Systems"], 4.7),
@@ -115,11 +120,9 @@ const HodFacultyCard = ({ faculty, onViewDetails }) => (
   </div>
 );
 
-// ─────────────────────────────────────────────────────────────────────────────
 // ROOT
-// ─────────────────────────────────────────────────────────────────────────────
 const HodDashboard = () => {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   // ── State ──────────────────────────────────────────────────────────────────
@@ -161,11 +164,6 @@ const HodDashboard = () => {
     setPage(1);
   }, [search]);
 
-  const handleLogout = () => {
-    logout();
-    navigate("/login", { replace: true });
-  };
-
   // Navigate to FacultyAnalytics with HOD context
   // Route: /hod/faculty/:id/analytics
   const handleViewDetails = (faculty) => {
@@ -188,52 +186,15 @@ const HodDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/*  NAVBAR  */}
-      <header className="bg-white border-b border-gray-100 sticky top-0 z-20">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-14 sm:h-16">
-            {/* Left: Logo */}
-            <div className="flex items-center gap-0.5 sm:gap-1 min-w-0">
-              {/* Logo */}
-              <img
-                src={logo}
-                alt="College Logo"
-                className="h-7 sm:h-9 md:h-11 lg:h-12 w-auto object-contain shrink-0"
-              />
-
-              {/* Text */}
-              <span className="font-bold text-[#170a89] text-sm sm:text-lg md:text-base lg:text-xl truncate">
-                ClassEcho
-              </span>
-            </div>
-
-            {/* Right: Profile + Logout */}
-            <div className="flex items-center gap-2 sm:gap-4">
-              {/* Avatar */}
-              <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-xs sm:text-sm">
-                {initials || "F"}
-              </div>
-
-              {/* Logout button */}
-              <button
-                onClick={handleLogout}
-                className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm text-gray-500 hover:text-red-500 hover:bg-gray-50 rounded-lg transition cursor-pointer"
-              >
-                <LogOut size={16} />
-                <span className="hidden sm:inline">Logout</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header initials={initials} />
 
       {/*  MAIN  */}
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
         {/* Page title */}
         <div className="mb-8">
           <h1
-            className="font-extrabold text-gray-900 leading-tight"
-            style={{ fontSize: "clamp(1.4rem, 3.5vw, 2rem)" }}
+            className="font-bold text-gray-600 leading-tight"
+            style={{ fontSize: "clamp(1.3rem,3vw,1.75rem)" }}
           >
             Department of {user?.department ?? "Information Technology"}
           </h1>
@@ -261,8 +222,8 @@ const HodDashboard = () => {
                 TOTAL FACULTY
               </p>
               <p
-                className="font-extrabold text-gray-900 leading-tight"
-                style={{ fontSize: "clamp(1.3rem, 3vw, 1.75rem)" }}
+                className="font-bold text-gray-600 leading-tight"
+                style={{ fontSize: "clamp(1rem,2vw,1.5rem)" }}
               >
                 {loading ? "—" : `${stats.totalFaculty} Members`}
               </p>
@@ -282,8 +243,8 @@ const HodDashboard = () => {
                 DEPT AVG SCORE
               </p>
               <p
-                className="font-extrabold text-gray-900 leading-tight"
-                style={{ fontSize: "clamp(1.3rem, 3vw, 1.75rem)" }}
+                className="font-bold text-gray-600 leading-tight"
+                style={{ fontSize: "clamp(1rem,2vw,1.5rem)" }}
               >
                 {loading ? "—" : `${stats.deptAvgScore} / 5.0`}
               </p>

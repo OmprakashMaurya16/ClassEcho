@@ -89,7 +89,7 @@ const FacultyCard = ({
       {showViewDetails && (
         <button
           onClick={() => onViewDetails(faculty)}
-          className="mt-auto w-full flex items-center justify-center gap-1.5 py-2.5 bg-gray-50 border-t border-gray-100 rounded-xl text-gray-600 font-medium hover:bg-indigo-50 hover:text-indigo-600 transition"
+          className="mt-auto w-full flex items-center justify-center gap-1.5 py-2.5 cursor-pointer bg-gray-50 border-t border-gray-100 rounded-xl text-gray-600 font-medium hover:bg-indigo-50 hover:text-indigo-600 transition"
           style={{ fontSize: "clamp(0.75rem, 1.4vw, 0.85rem)" }}
         >
           View Details <ChevronRight size={14} />

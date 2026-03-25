@@ -4,17 +4,11 @@
 // ─────────────────────────────────────────────────────────────────────────────
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  GraduationCap,
-  QrCode,
-  BarChart2,
-  History,
-  LogOut,
-} from "lucide-react";
+import { GraduationCap, QrCode, BarChart2, History } from "lucide-react";
 import { useAuth } from "../auth/AuthContext";
 import Footer from "../components/Footer";
 import ActionCard from "../components/ActionCard";
-import logo from "../assets/vit.png";
+import Header from "../components/Header";
 
 // ── Mock recent sessions ──────────────────────────────────────────────────────
 // Replace with: fetch("/api/faculty/sessions/recent") → setRecentSessions(data.sessions)
@@ -61,7 +55,7 @@ const StatusBadge = ({ status }) => {
 };
 
 const FacultyDashboard = () => {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   // API INTEGRATION: replace mock with real fetch
@@ -73,11 +67,6 @@ const FacultyDashboard = () => {
   //   fetch("/api/faculty/sessions/recent", { headers: { Authorization: `Bearer ${token}` } })
   //     .then(r => r.json()).then(d => setRecentSessions(d.sessions));
   // }, []);
-
-  const handleLogout = () => {
-    logout();
-    navigate("/login", { replace: true });
-  };
 
   const getInitials = (name = "") => {
     return name
@@ -95,44 +84,7 @@ const FacultyDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* ── Top navbar ─────────────────────────────────────────────────────── */}
-      <header className="bg-white border-b border-gray-100 sticky top-0 z-20">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-14 sm:h-16">
-            {/* Left: Logo */}
-            <div className="flex items-center gap-0.5 sm:gap-1 min-w-0">
-              {/* Logo */}
-              <img
-                src={logo}
-                alt="College Logo"
-                className="h-7 sm:h-9 md:h-11 lg:h-12 w-auto object-contain shrink-0"
-              />
-
-              {/* Text */}
-              <span className="font-bold text-[#170a89] text-sm sm:text-lg md:text-base lg:text-xl truncate">
-                ClassEcho
-              </span>
-            </div>
-
-            {/* Right: Profile + Logout */}
-            <div className="flex items-center gap-2 sm:gap-4">
-              {/* Avatar */}
-              <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-xs sm:text-sm">
-                {initials || "F"}
-              </div>
-
-              {/* Logout button */}
-              <button
-                onClick={handleLogout}
-                className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm text-gray-500 hover:text-red-500 hover:bg-gray-50 rounded-lg transition cursor-pointer"
-              >
-                <LogOut size={16} />
-                <span className="hidden sm:inline">Logout</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header initials={initials} />
 
       {/* ── Main ─────────────────────────────────────────────────────────────── */}
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
@@ -146,8 +98,8 @@ const FacultyDashboard = () => {
               FACULTY PORTAL
             </p>
             <h1
-              className="font-extrabold text-gray-900 leading-tight"
-              style={{ fontSize: "clamp(1.5rem, 4vw, 2.25rem)" }}
+              className="font-bold text-gray-600 leading-tight"
+              style={{ fontSize: "clamp(1.3rem,3vw,1.75rem)" }}
             >
               Welcome, {user?.name ?? "Faculty"}
             </h1>
