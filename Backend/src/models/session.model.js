@@ -4,7 +4,7 @@ const sessionSchema = new mongoose.Schema(
   {
     faculty: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Faculty",
+      ref: "User",
       required: true,
     },
 
@@ -15,6 +15,18 @@ const sessionSchema = new mongoose.Schema(
 
     date: {
       type: Date,
+      required: true,
+    },
+
+    qrToken: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+
+    expiresAt: {
+      type: Date,
+      required: true,
     },
 
     isActive: {
@@ -24,6 +36,8 @@ const sessionSchema = new mongoose.Schema(
   },
   { timestamps: true },
 );
+
+sessionSchema.index({ faculty: 1, subject: 1, date: 1 }, { unique: true });
 
 const Session = mongoose.model("Session", sessionSchema);
 
