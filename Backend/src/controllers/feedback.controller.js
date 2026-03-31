@@ -75,7 +75,7 @@ const submitFeedback = asyncHandler(async (req, res) => {
         remark: remark || "",
       };
 
-      const sentiment = await getSentimentFromML(mlInput);
+      const sentiment = await getSentimentFromML(mlInput); //ml model
 
       await Feedback.findByIdAndUpdate(feedback._id, {
         sentiment,
