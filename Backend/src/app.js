@@ -11,7 +11,7 @@ app.use(cookieParser());
 app.use(
   cors({
     origin: process.env.FRONTEND_URL || "http://localhost:5173",
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   }),
@@ -28,11 +28,16 @@ const authRoutes = require("./routes/auth.routes.js");
 const subjectRoutes = require("./routes/subject.routes.js");
 const adminRoutes = require("./routes/admin.routes.js");
 const sessionRoutes = require("./routes/sessions.routes.js");
+const sessionRoutes = require("./routes/session.routes.js");
+const feedbackRoutes = require("./routes/feedback.routes.js");
+const analyticsRoutes = require("./routes/analytics.routes.js");
 
 app.use("/api/auth", authRoutes);
 app.use("/api/subjects", subjectRoutes);
 app.use("/api/admin", adminRoutes);
-app.use("/api/faculty", sessionRoutes);
+app.use("/api/sessions", sessionRoutes);
+app.use("/api/feedback", feedbackRoutes);
+app.use("/api/analytics/faculty", analyticsRoutes);
 
 app.use((err, req, res, next) => {
   if (err.name === "ApiError") {

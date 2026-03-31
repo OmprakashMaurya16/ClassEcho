@@ -12,16 +12,16 @@ const {
 const router = express.Router();
 
 router.post(
-  "/sessions/generate",
+  "/generate",
   authMiddleware,
   authorizeRoles("Faculty"),
   generateSession,
 );
 
-router.get("/sessions/:token", validateSession);
+router.get("/:token", validateSession);
 
 router.patch(
-  "/sessions/:sessionId/close",
+  "/:sessionId/close",
   authMiddleware,
   authorizeRoles("Faculty"),
   closeSession,
