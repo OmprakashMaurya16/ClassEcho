@@ -32,7 +32,7 @@ const sessionRoutes = require("./routes/sessions.routes.js");
 app.use("/api/auth", authRoutes);
 app.use("/api/subjects", subjectRoutes);
 app.use("/api/admin", adminRoutes);
-app.use("/api/sessions", sessionRoutes);
+app.use("/api/faculty", sessionRoutes);
 
 app.use((err, req, res, next) => {
   if (err.name === "ApiError") {
