@@ -1,11 +1,5 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
-  Users,
-  BarChart2,
-  Star,
-  GraduationCap,
-  Zap,
-  Heart,
   RefreshCw,
   Lock,
   Eye,
@@ -24,7 +18,8 @@ import FacultyForm, {
   inputCls,
   Field,
 } from "../components/FacultyForm";
-const INITIAL_COUNTS = {
+
+const MOCK_COUNTS = {
   total: null,
   INFT: null,
   CMPN: null,
@@ -33,6 +28,7 @@ const INITIAL_COUNTS = {
   BIOMED: null,
   FE: null,
 };
+
 const pwdStrength = (pwd) => {
   if (!pwd) return 0;
   let s = 0;
@@ -65,6 +61,7 @@ const validatePasswordStep = (f) => {
     e.confirmPassword = "Passwords do not match";
   return e;
 };
+
 const fs = { fontSize: "clamp(0.72rem, 1.4vw, 0.875rem)" };
 
 const StepIndicator = ({ step }) => (
@@ -115,6 +112,7 @@ const StepIndicator = ({ step }) => (
     })}
   </div>
 );
+
 const PasswordStep = ({ detailsForm, pwdForm, setPwdForm, errors }) => {
   const [showPwd, setShowPwd] = useState(false);
   const [showConf, setShowConf] = useState(false);
@@ -240,6 +238,7 @@ const PasswordStep = ({ detailsForm, pwdForm, setPwdForm, errors }) => {
     </div>
   );
 };
+
 const Toast = ({ toast }) => {
   if (!toast) return null;
   return (
@@ -259,12 +258,16 @@ const Toast = ({ toast }) => {
     </div>
   );
 };
+
 const AdminDashboard = () => {
-  const [counts, setCounts] = useState(INITIAL_COUNTS);
+  const [counts] = useState(MOCK_COUNTS);
+
   const [detailsForm, setDetailsForm] = useState(EMPTY_FACULTY_FORM);
   const [detailsErrors, setDetailsErrors] = useState({});
+
   const [pwdForm, setPwdForm] = useState({ password: "", confirmPassword: "" });
   const [pwdErrors, setPwdErrors] = useState({});
+
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState(null);
@@ -273,40 +276,6 @@ const AdminDashboard = () => {
     setToast({ message: msg, type });
     setTimeout(() => setToast(null), 4000);
   };
-
-  const fetchStats = async (withToast = false) => {
-    try {
-      const token = JSON.parse(
-        sessionStorage.getItem("vit_user") ?? "{}",
-      )?.token;
-      const res = await fetch("/api/admin/stats", {
-        headers: {
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-      });
-      const payload = await res.json();
-
-      if (!res.ok) {
-        if (withToast) {
-          showToast(payload?.message || "Failed to refresh stats.", "error");
-        }
-        return;
-      }
-
-      setCounts(payload?.data || INITIAL_COUNTS);
-      if (withToast) {
-        showToast("Stats refreshed successfully.");
-      }
-    } catch {
-      if (withToast) {
-        showToast("Network error while refreshing stats.", "error");
-      }
-    }
-  };
-
-  useEffect(() => {
-    fetchStats();
-  }, []);
 
   const handleNext = () => {
     const errs = validateFacultyForm(detailsForm, "add");
@@ -323,6 +292,7 @@ const AdminDashboard = () => {
     setPwdErrors({});
     setStep(1);
   };
+
   const handleSubmit = async () => {
     const errs = validatePasswordStep(pwdForm);
     if (Object.keys(errs).length) {
@@ -338,6 +308,7 @@ const AdminDashboard = () => {
       password: pwdForm.password,
       role: detailsForm.role,
       department: detailsForm.department,
+
       designation:
         detailsForm.role === "HOD"
           ? "Head of Department"
@@ -365,7 +336,7 @@ const AdminDashboard = () => {
       }
 
       showToast(`${detailsForm.fullName} added successfully!`);
-      fetchStats();
+
       setDetailsForm(EMPTY_FACULTY_FORM);
       setPwdForm({ password: "", confirmPassword: "" });
       setStep(1);
@@ -375,6 +346,7 @@ const AdminDashboard = () => {
       setLoading(false);
     }
   };
+
   const countCards = [
     {
       label: "Total Faculty in VIT",
@@ -432,9 +404,7 @@ const AdminDashboard = () => {
               </div>
 
               <button
-                type="button"
-                onClick={() => fetchStats(true)}
-                className="text-gray-400 mt-0.5 cursor-pointer"
+                className="text-gray-400 mt-0.5"
                 style={{ fontSize: "clamp(0.7rem, 1.4vw, 0.8rem)" }}>
                 <RefreshCw size={13} /> Refresh
               </button>
@@ -501,7 +471,7 @@ const AdminDashboard = () => {
                   <button
                     type="button"
                     onClick={handleNext}
-                    className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 transition shadow-md shadow-indigo-200"
+                    className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 transition shadow-md shadow-indigo-200 cursor-pointer"
                     style={fs}>
                     Next <ChevronRight size={16} />
                   </button>

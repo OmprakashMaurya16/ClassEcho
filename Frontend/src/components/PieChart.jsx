@@ -11,14 +11,12 @@ const PieChart = ({ data }) => {
 
   const total = positive + neutral + negative;
 
-  // Prevent division by zero
   if (total === 0) {
     return (
       <div className="text-gray-400 text-sm text-center">No data available</div>
     );
   }
 
-  const size = 120;
   const r = 42;
   const stroke = 18;
   const circumference = 2 * Math.PI * r;
@@ -33,7 +31,6 @@ const PieChart = ({ data }) => {
 
   return (
     <svg viewBox="0 0 120 120" className="w-full max-w-40">
-      {/* Background */}
       <circle
         cx="60"
         cy="60"
@@ -43,7 +40,6 @@ const PieChart = ({ data }) => {
         fill="none"
       />
 
-      {/* Segments */}
       {segments.map((seg, i) => {
         const dash = (seg.value / total) * circumference;
 
@@ -70,21 +66,18 @@ const PieChart = ({ data }) => {
         return circle;
       })}
 
-      {/* Center Text */}
       <text
         x="60"
         y="55"
         textAnchor="middle"
-        className="text-sm font-bold fill-gray-800"
-      >
+        className="text-sm font-bold fill-gray-800">
         {positive}%
       </text>
       <text
         x="60"
         y="70"
         textAnchor="middle"
-        className="text-[10px] fill-gray-400"
-      >
+        className="text-[10px] fill-gray-400">
         Positive
       </text>
     </svg>

@@ -15,6 +15,7 @@ export const EMPTY_FACULTY_FORM = {
   designation: "",
   role: "Faculty",
 };
+
 export const inputCls = (err) =>
   `w-full px-4 py-2.5 border rounded-xl bg-white focus:outline-none focus:ring-2 focus:border-transparent transition-all ${
     err

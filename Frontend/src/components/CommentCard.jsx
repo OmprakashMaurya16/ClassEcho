@@ -7,7 +7,6 @@ const COLORS = {
 const CommentCard = ({ initials, text, sentiment, date }) => {
   return (
     <div className="flex gap-3 group">
-      {/* Avatar */}
       <div className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-100 text-blue-700 font-bold text-xs">
         {initials}
       </div>
@@ -28,8 +27,7 @@ const CommentCard = ({ initials, text, sentiment, date }) => {
         <p className="text-gray-600 text-sm mt-1 leading-relaxed">{text}</p>
 
         <span
-          className={`mt-2 inline-block px-2 py-1 text-xs rounded ${COLORS[sentiment]}`}
-        >
+          className={`mt-2 inline-block px-2 py-1 text-xs rounded ${COLORS[sentiment]}`}>
           {sentiment}
         </span>
       </div>

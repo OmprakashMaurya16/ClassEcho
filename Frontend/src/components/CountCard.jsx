@@ -1,4 +1,3 @@
-
 const Skeleton = () => (
   <div className="h-7 w-14 rounded-md bg-gray-200 animate-pulse" />
 );

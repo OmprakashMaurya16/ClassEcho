@@ -5,7 +5,6 @@ import {
   Pencil,
   Trash2,
   CheckCircle,
-  AlertCircle,
   Loader2,
   BookMarked,
 } from "lucide-react";
@@ -33,12 +32,8 @@ const SubjectForm = ({
   onCancel,
   loading,
 }) => {
-  const [form, setForm] = useState({ ...initial });
+  const [form, setForm] = useState(() => ({ ...initial }));
   const [errors, setErrors] = useState({});
-  useEffect(() => {
-    setForm({ ...initial });
-    setErrors({});
-  }, [initial]);
   const handleSave = () => {
     const errs = validateSubject(form);
     if (Object.keys(errs).length) {
@@ -300,6 +295,7 @@ const SubjectsModal = ({
                 New Subject
               </p>
               <SubjectForm
+                key="new-subject"
                 onSave={handleAdd}
                 onCancel={() => setAddingNew(false)}
                 loading={loadingAdd}
@@ -325,6 +321,7 @@ const SubjectsModal = ({
                         Edit Subject
                       </p>
                       <SubjectForm
+                        key={s._id}
                         initial={s}
                         onSave={handleEditSave}
                         onCancel={() => setEditingSubject(null)}

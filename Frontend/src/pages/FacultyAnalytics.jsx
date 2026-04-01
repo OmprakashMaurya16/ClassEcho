@@ -1,20 +1,3 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// FacultyAnalytics.jsx — Performance Analytics dashboard
-//
-// API INTEGRATION POINTS:
-//   GET /api/faculty/subjects
-//     → { subjects: [{ _id, name, code }] }
-//
-//   GET /api/faculty/analytics?subjectId=<id|"overall">&filter=<weekly|monthly|semesterly>
-//     → {
-//         overallScore: number (out of 10),
-//         trend:        [{ label, score, deptAvg }],
-//         parameters:   [{ label, score, max }],
-//         sentiment:    { positive, neutral, negative },   // percentages
-//         comments:     [{ _id, text, sentiment, date, initials }]
-//       }
-// ─────────────────────────────────────────────────────────────────────────────
-
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -23,7 +6,6 @@ import {
   MessageSquare,
   TrendingUp,
   BarChart2,
-  LogOut,
 } from "lucide-react";
 import { useAuth } from "../auth/AuthContext";
 import Footer from "../components/Footer";
@@ -33,10 +15,6 @@ import PieChart from "../components/PieChart";
 import CommentCard from "../components/CommentCard";
 import Header from "../components/Header";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// MOCK DATA
-// Replace each usage of MOCK_* with your API fetch results.
-// ─────────────────────────────────────────────────────────────────────────────
 const MOCK_SUBJECTS = [
   { _id: "overall", name: "Overall", code: "" },
   { _id: "sub1", name: "Thermodynamics II", code: "ME401" },
@@ -166,9 +144,6 @@ const MOCK_ANALYTICS = {
   MOCK_ANALYTICS[id] = MOCK_ANALYTICS.overall;
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// HELPERS
-// ─────────────────────────────────────────────────────────────────────────────
 const getInitials = (name = "") =>
   name
     .split(" ")
@@ -177,9 +152,6 @@ const getInitials = (name = "") =>
     .join("")
     .toUpperCase();
 
-// ─────────────────────────────────────────────────────────────────────────────
-// COMPONENT
-// ─────────────────────────────────────────────────────────────────────────────
 const FacultyAnalytics = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -191,18 +163,6 @@ const FacultyAnalytics = () => {
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef(null);
 
-  // ── Fetch analytics whenever subject or filter changes ───────────────────
-  // API INTEGRATION — replace the mock setTimeout below with:
-  //
-  //   const token = JSON.parse(sessionStorage.getItem("vit_user") ?? "{}")?.token;
-  //   fetch(
-  //     `/api/faculty/analytics?subjectId=${activeSubj}&filter=${filter}`,
-  //     { headers: { Authorization: `Bearer ${token}` } }
-  //   )
-  //     .then((r) => r.json())
-  //     .then(setAnalytics)
-  //     .catch(console.error)
-  //     .finally(() => setLoading(false));
   useEffect(() => {
     setLoading(true);
     const t = setTimeout(() => {
@@ -212,16 +172,6 @@ const FacultyAnalytics = () => {
     return () => clearTimeout(t);
   }, [activeSubj, filter]);
 
-  // ── Fetch subjects list on mount ─────────────────────────────────────────
-  // API INTEGRATION — replace mock with:
-  //
-  //   useEffect(() => {
-  //     const token = JSON.parse(sessionStorage.getItem("vit_user") ?? "{}")?.token;
-  //     fetch("/api/faculty/subjects", { headers: { Authorization: `Bearer ${token}` } })
-  //       .then((r) => r.json())
-  //       .then((d) => setSubjects([{ _id: "overall", name: "Overall", code: "" }, ...d.subjects]));
-  //   }, []);
-
   const activeSubjectLabel =
     subjects.find((s) => s._id === activeSubj)?.name ?? "Overall";
 
@@ -229,44 +179,34 @@ const FacultyAnalytics = () => {
 
   const initials = getInitials(user?.name);
 
-  // ─────────────────────────────────────────────────────────────────────────
-  // RENDER
-  // ─────────────────────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header initials={initials} />
 
-      {/* ── PAGE CONTENT ─────────────────────────────────────────────────── */}
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        {/* Back + heading */}
         <div className="mb-6">
           <button
             onClick={() => navigate(-1)}
             className="flex items-center gap-1 text-gray-400 hover:text-blue-600 transition mb-2 cursor-pointer"
-            style={{ fontSize: "clamp(0.72rem, 1.4vw, 0.8rem)" }}
-          >
+            style={{ fontSize: "clamp(0.72rem, 1.4vw, 0.8rem)" }}>
             <ChevronLeft size={14} /> Back
           </button>
           <h1
             className="font-bold text-gray-700"
-            style={{ fontSize: "clamp(1.3rem, 3vw, 1.75rem)" }}
-          >
+            style={{ fontSize: "clamp(1.3rem, 3vw, 1.75rem)" }}>
             Performance Analytics
           </h1>
           <p
             className="text-gray-400 mt-0.5"
-            style={{ fontSize: "clamp(0.72rem, 1.4vw, 0.8rem)" }}
-          >
+            style={{ fontSize: "clamp(0.72rem, 1.4vw, 0.8rem)" }}>
             {user?.department} · {new Date().getFullYear()}
           </p>
         </div>
 
-        {/* ── Subject filter — horizontal scroll ─────────────────────── */}
         <div
           ref={scrollRef}
           className="flex gap-2 overflow-x-auto pb-2 mb-6"
-          style={{ scrollbarWidth: "none" }}
-        >
+          style={{ scrollbarWidth: "none" }}>
           {subjects.map((s) => (
             <button
               key={s._id}
@@ -276,31 +216,25 @@ const FacultyAnalytics = () => {
                   ? "bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-200"
                   : "bg-white text-gray-600 border-gray-200 hover:border-blue-300 hover:text-blue-600"
               }`}
-              style={{ fontSize: "clamp(0.75rem, 1.4vw, 0.875rem)" }}
-            >
+              style={{ fontSize: "clamp(0.75rem, 1.4vw, 0.875rem)" }}>
               {s.name}
             </button>
           ))}
         </div>
 
-        {/* ── Main layout: left (80%) + right sidebar (20%) ────────────── */}
         <div className="flex flex-col lg:flex-row gap-5">
-          {/* ══ LEFT COLUMN ══════════════════════════════════════════════ */}
           <div className="flex-1 min-w-0 space-y-5">
-            {/* 1. Trend chart */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 sm:p-6">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
                 <div className="flex items-center gap-2">
                   <TrendingUp size={17} className="text-blue-600" />
                   <h2
                     className="font-bold text-gray-800"
-                    style={{ fontSize: "clamp(0.9rem, 1.8vw, 1.05rem)" }}
-                  >
+                    style={{ fontSize: "clamp(0.9rem, 1.8vw, 1.05rem)" }}>
                     Weekly Performance Trend
                   </h2>
                 </div>
 
-                {/* Filter pills */}
                 <div className="flex gap-1.5">
                   {["weekly", "monthly", "semesterly"].map((f) => (
                     <button
@@ -311,22 +245,19 @@ const FacultyAnalytics = () => {
                           ? "bg-blue-600 text-white"
                           : "bg-gray-100 text-gray-500 hover:bg-gray-200"
                       }`}
-                      style={{ fontSize: "clamp(0.65rem, 1.2vw, 0.75rem)" }}
-                    >
+                      style={{ fontSize: "clamp(0.65rem, 1.2vw, 0.75rem)" }}>
                       {f}
                     </button>
                   ))}
                 </div>
               </div>
 
-              {/* Chart legend */}
               <div className="flex gap-5 mb-3">
                 <div className="flex items-center gap-1.5">
                   <div className="w-5 h-0.5 bg-blue-600 rounded-full" />
                   <span
                     className="text-gray-500"
-                    style={{ fontSize: "clamp(0.65rem, 1.2vw, 0.75rem)" }}
-                  >
+                    style={{ fontSize: "clamp(0.65rem, 1.2vw, 0.75rem)" }}>
                     You
                   </span>
                 </div>
@@ -334,8 +265,7 @@ const FacultyAnalytics = () => {
                   <div className="w-5 border-t-2 border-dashed border-gray-300" />
                   <span
                     className="text-gray-500"
-                    style={{ fontSize: "clamp(0.65rem, 1.2vw, 0.75rem)" }}
-                  >
+                    style={{ fontSize: "clamp(0.65rem, 1.2vw, 0.75rem)" }}>
                     Dept Avg
                   </span>
                 </div>
@@ -348,17 +278,13 @@ const FacultyAnalytics = () => {
               )}
             </div>
 
-            {/* 2. Parameter bars (left) + Student Comments (right) ─────── */}
-            {/*    CHANGED: comments moved here, pie chart moved to right sidebar */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {/* 2a. Parameter Analysis */}
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 sm:p-6">
                 <div className="flex items-center gap-2 mb-4">
                   <BarChart2 size={17} className="text-blue-600" />
                   <h2
                     className="font-bold text-gray-800"
-                    style={{ fontSize: "clamp(0.9rem, 1.8vw, 1.05rem)" }}
-                  >
+                    style={{ fontSize: "clamp(0.9rem, 1.8vw, 1.05rem)" }}>
                     Parameter Analysis
                   </h2>
                 </div>
@@ -379,22 +305,19 @@ const FacultyAnalytics = () => {
                 )}
               </div>
 
-              {/* 2b. Student Comments — MOVED from right sidebar to here */}
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 sm:p-6 flex flex-col">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
                     <MessageSquare size={17} className="text-blue-600" />
                     <h2
                       className="font-bold text-gray-800"
-                      style={{ fontSize: "clamp(0.9rem, 1.8vw, 1.05rem)" }}
-                    >
+                      style={{ fontSize: "clamp(0.9rem, 1.8vw, 1.05rem)" }}>
                       Student Feedback
                     </h2>
                   </div>
                   <span
                     className="text-gray-400 font-medium"
-                    style={{ fontSize: "clamp(0.65rem, 1.2vw, 0.72rem)" }}
-                  >
+                    style={{ fontSize: "clamp(0.65rem, 1.2vw, 0.72rem)" }}>
                     Latest
                   </span>
                 </div>
@@ -421,8 +344,7 @@ const FacultyAnalytics = () => {
                 {(analytics?.comments?.length ?? 0) > 5 && (
                   <button
                     className="mt-4 text-center text-blue-600 font-semibold hover:underline"
-                    style={{ fontSize: "clamp(0.72rem, 1.3vw, 0.8rem)" }}
-                  >
+                    style={{ fontSize: "clamp(0.72rem, 1.3vw, 0.8rem)" }}>
                     View All Comments →
                   </button>
                 )}
@@ -430,16 +352,13 @@ const FacultyAnalytics = () => {
             </div>
           </div>
 
-          {/* ══ RIGHT SIDEBAR ════════════════════════════════════════════ */}
           <div className="w-full lg:w-60 xl:w-64 shrink-0 space-y-4">
-            {/* 1. Overall Score — REDUCED size */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
               <div className="flex items-center gap-2 mb-3">
                 <Star size={15} className="text-yellow-500 fill-yellow-500" />
                 <h3
                   className="font-bold text-gray-800"
-                  style={{ fontSize: "clamp(0.82rem, 1.5vw, 0.9rem)" }}
-                >
+                  style={{ fontSize: "clamp(0.82rem, 1.5vw, 0.9rem)" }}>
                   Overall Score
                 </h3>
               </div>
@@ -448,28 +367,23 @@ const FacultyAnalytics = () => {
                 <div className="h-16 bg-gray-50 rounded-xl animate-pulse" />
               ) : (
                 <div className="flex items-center gap-4">
-                  {/* Big number — smaller than before */}
                   <div className="shrink-0">
                     <span
                       className="font-extrabold text-blue-600 leading-none"
-                      style={{ fontSize: "clamp(2rem, 4vw, 2.5rem)" }}
-                    >
+                      style={{ fontSize: "clamp(2rem, 4vw, 2.5rem)" }}>
                       {analytics?.overallScore ?? "—"}
                     </span>
                     <pre
                       className="text-gray-400 block"
-                      style={{ fontSize: "clamp(0.62rem, 1.1vw, 0.7rem)" }}
-                    >
+                      style={{ fontSize: "clamp(0.62rem, 1.1vw, 0.7rem)" }}>
                       / 10
                     </pre>
                   </div>
 
-                  {/* Progress bar + subject label */}
                   <div className="flex-1 min-w-0">
                     <div
                       className="w-full bg-gray-100 rounded-full overflow-hidden mb-1"
-                      style={{ height: 6 }}
-                    >
+                      style={{ height: 6 }}>
                       <div
                         className="h-full rounded-full bg-linear-to-r from-blue-400 to-blue-600 transition-all duration-700"
                         style={{ width: `${scorePercent}%` }}
@@ -477,15 +391,13 @@ const FacultyAnalytics = () => {
                     </div>
                     <div
                       className="flex justify-between text-gray-300"
-                      style={{ fontSize: "clamp(0.55rem, 1vw, 0.62rem)" }}
-                    >
+                      style={{ fontSize: "clamp(0.55rem, 1vw, 0.62rem)" }}>
                       <span>0</span>
                       <span>10</span>
                     </div>
                     <p
                       className="text-gray-500 mt-1 truncate"
-                      style={{ fontSize: "clamp(0.62rem, 1.1vw, 0.7rem)" }}
-                    >
+                      style={{ fontSize: "clamp(0.62rem, 1.1vw, 0.7rem)" }}>
                       {activeSubjectLabel}
                     </p>
                   </div>
@@ -493,14 +405,12 @@ const FacultyAnalytics = () => {
               )}
             </div>
 
-            {/* 2. Sentiment Analysis — MOVED from left column to here */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-5">
               <div className="flex items-center gap-2 mb-4">
                 <MessageSquare size={16} className="text-blue-600" />
                 <h3
                   className="font-bold text-gray-800"
-                  style={{ fontSize: "clamp(0.82rem, 1.5vw, 0.9rem)" }}
-                >
+                  style={{ fontSize: "clamp(0.82rem, 1.5vw, 0.9rem)" }}>
                   Sentiment Analysis
                 </h3>
               </div>
@@ -532,8 +442,7 @@ const FacultyAnalytics = () => {
                     ].map((item) => (
                       <div
                         key={item.label}
-                        className="flex items-center justify-between"
-                      >
+                        className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <span
                             className={`w-2.5 h-2.5 rounded-full shrink-0 ${item.color}`}
@@ -542,15 +451,15 @@ const FacultyAnalytics = () => {
                             className="text-gray-600"
                             style={{
                               fontSize: "clamp(0.68rem, 1.3vw, 0.78rem)",
-                            }}
-                          >
+                            }}>
                             {item.label}
                           </span>
                         </div>
                         <span
                           className="font-semibold text-gray-700"
-                          style={{ fontSize: "clamp(0.68rem, 1.3vw, 0.78rem)" }}
-                        >
+                          style={{
+                            fontSize: "clamp(0.68rem, 1.3vw, 0.78rem)",
+                          }}>
                           {item.val ?? 0}%
                         </span>
                       </div>

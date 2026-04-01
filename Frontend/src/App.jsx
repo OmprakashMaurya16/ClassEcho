@@ -16,6 +16,7 @@ import FacultyDashboard from "./pages/FacultyDashboard";
 import ManageFaculty from "./pages/ManageFaculty";
 import GenerateQR from "./pages/GenerateQR";
 import FacultyAnalytics from "./pages/FacultyAnalytics";
+import FeedbackForm from "./pages/FeedbackForm";
 
 const PublicRoute = () => {
   const { user } = useAuth();
