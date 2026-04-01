@@ -3,12 +3,23 @@ const asyncHandler = require("../utils/async.handler.js");
 const sendResponse = require("../utils/response.helper.js");
 const mongoose = require("mongoose");
 
-const getAnalytics = asyncHandler(async (req, res) => {
-  const facultyId = req.user.id;
-
-  const matchStage = {
+const buildMatchStage = (facultyId, subjectId) => {
+  const match = {
     faculty: new mongoose.Types.ObjectId(facultyId),
   };
+
+  if (subjectId && mongoose.Types.ObjectId.isValid(subjectId)) {
+    match.subject = new mongoose.Types.ObjectId(subjectId);
+  }
+
+  return match;
+};
+
+const getAnalytics = asyncHandler(async (req, res) => {
+  const facultyId = req.user.id;
+  const { subjectId } = req.query;
+
+  const matchStage = buildMatchStage(facultyId, subjectId);
 
   const stats = await Feedback.aggregate([
     { $match: matchStage },
@@ -16,7 +27,7 @@ const getAnalytics = asyncHandler(async (req, res) => {
     {
       $group: {
         _id: null,
-        avgRating: { $avg: "$avgRating" },
+        avgRating: { $avg: "$averageRating" },
         total: { $sum: 1 },
         positive: {
           $sum: { $cond: [{ $eq: ["$sentiment", "Positive"] }, 1, 0] },
@@ -27,12 +38,19 @@ const getAnalytics = asyncHandler(async (req, res) => {
         negative: {
           $sum: { $cond: [{ $eq: ["$sentiment", "Negative"] }, 1, 0] },
         },
+        conceptClarity: { $avg: "$rating.conceptClarity" },
+        lectureStructure: { $avg: "$rating.lectureStructure" },
+        subjectMastery: { $avg: "$rating.subjectMastery" },
+        practicalUnderstanding: { $avg: "$rating.practicalUnderstanding" },
+        studentEngagement: { $avg: "$rating.studentEngagement" },
+        lecturePace: { $avg: "$rating.lecturePace" },
+        learningOutcomeImpact: { $avg: "$rating.learningOutcomeImpact" },
       },
     },
   ]);
 
   const comments = await Feedback.find({
-    faculty: facultyId,
+    ...matchStage,
     remark: { $ne: "" },
   })
     .sort({ createdAt: -1 })
@@ -53,12 +71,13 @@ const getAnalytics = asyncHandler(async (req, res) => {
 
 const getTimeline = asyncHandler(async (req, res) => {
   const facultyId = req.user.id;
+  const { subjectId } = req.query;
+
+  const matchStage = buildMatchStage(facultyId, subjectId);
 
   const data = await Feedback.aggregate([
     {
-      $match: {
-        faculty: new mongoose.Types.ObjectId(facultyId),
-      },
+      $match: matchStage,
     },
     {
       $group: {
@@ -68,13 +87,19 @@ const getTimeline = asyncHandler(async (req, res) => {
             date: "$createdAt",
           },
         },
-        score: { $avg: "$avgRating" },
+        score: { $avg: "$averageRating" },
       },
     },
     { $sort: { _id: 1 } },
   ]);
 
-  return sendResponse(res, 200, "Timeline", data);
+  const timeline = data.map((item) => ({
+    label: item._id,
+    score: Math.round((item.score || 0) * 100) / 100,
+    deptAvg: Math.round((item.score || 0) * 100) / 100,
+  }));
+
+  return sendResponse(res, 200, "Timeline", timeline);
 });
 
 const getAnalyticsById = asyncHandler(async (req, res) => {
@@ -89,7 +114,7 @@ const getAnalyticsById = asyncHandler(async (req, res) => {
     {
       $group: {
         _id: null,
-        avgRating: { $avg: "$avgRating" },
+        avgRating: { $avg: "$averageRating" },
         total: { $sum: 1 },
         positive: {
           $sum: { $cond: [{ $eq: ["$sentiment", "Positive"] }, 1, 0] },

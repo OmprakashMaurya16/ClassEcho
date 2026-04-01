@@ -93,6 +93,7 @@ const getFacultySessions = asyncHandler(async (req, res) => {
         date: 1,
         expiresAt: 1,
         isActive: 1,
+        qrToken: 1,
         responses: { $size: "$feedbackDocs" },
         subject: {
           _id: { $arrayElemAt: ["$subjectInfo._id", 0] },
@@ -104,6 +105,7 @@ const getFacultySessions = asyncHandler(async (req, res) => {
   ]);
 
   const now = Date.now();
+  const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
 
   const formatted = sessions.map((session) => {
     const isExpired = new Date(session.expiresAt).getTime() < now;
@@ -122,6 +124,7 @@ const getFacultySessions = asyncHandler(async (req, res) => {
       subjectCode: session.subject?.code || "",
       responses: session.responses,
       status,
+      feedbackUrl: `${frontendUrl}/feedback?token=${encodeURIComponent(session.qrToken)}`,
     };
   });
 

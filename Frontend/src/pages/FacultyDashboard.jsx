@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { GraduationCap, QrCode, BarChart2, History } from "lucide-react";
+import { GraduationCap, QrCode, BarChart2, History, Link2 } from "lucide-react";
 import { useAuth } from "../auth/AuthContext";
 import Footer from "../components/Footer";
 import ActionCard from "../components/ActionCard";
@@ -87,6 +87,11 @@ const FacultyDashboard = () => {
 
   const initials = getInitials(user?.name);
 
+  const openFormLink = (url) => {
+    if (!url) return;
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header initials={initials} />
@@ -149,8 +154,8 @@ const FacultyDashboard = () => {
             </h3>
           </div>
 
-          <div className="hidden sm:grid grid-cols-4 px-5 sm:px-6 py-3 bg-gray-50 border-b border-gray-100">
-            {["DATE", "COURSE", "RESPONSES", "STATUS"].map((h) => (
+          <div className="hidden sm:grid grid-cols-5 px-5 sm:px-6 py-3 bg-gray-50 border-b border-gray-100">
+            {["DATE", "COURSE", "RESPONSES", "STATUS", "ACTION"].map((h) => (
               <span
                 key={h}
                 className="font-semibold text-gray-400 uppercase tracking-wider"
@@ -165,8 +170,8 @@ const FacultyDashboard = () => {
               {[1, 2, 3].map((i) => (
                 <div
                   key={i}
-                  className="px-5 sm:px-6 py-4 grid grid-cols-4 gap-4">
-                  {[1, 2, 3, 4].map((j) => (
+                  className="px-5 sm:px-6 py-4 grid grid-cols-5 gap-4">
+                  {[1, 2, 3, 4, 5].map((j) => (
                     <div
                       key={j}
                       className="h-4 bg-gray-100 rounded animate-pulse"
@@ -187,7 +192,7 @@ const FacultyDashboard = () => {
               {recentSessions.map((s) => (
                 <div
                   key={s._id}
-                  className="px-5 sm:px-6 py-4 flex flex-col sm:grid sm:grid-cols-4 sm:items-center gap-2 sm:gap-4 hover:bg-gray-50 transition">
+                  className="px-5 sm:px-6 py-4 flex flex-col sm:grid sm:grid-cols-5 sm:items-center gap-2 sm:gap-4 hover:bg-gray-50 transition">
                   <div className="sm:hidden flex justify-between items-center">
                     <span
                       className="font-semibold text-gray-800"
@@ -201,6 +206,17 @@ const FacultyDashboard = () => {
                     style={{ fontSize: "clamp(0.68rem, 1.3vw, 0.78rem)" }}>
                     <span>{s.date}</span>
                     <span>{s.responses} responses</span>
+                  </div>
+                  <div className="sm:hidden mt-1">
+                    {s.status === "Active" && s.feedbackUrl ? (
+                      <button
+                        onClick={() => openFormLink(s.feedbackUrl)}
+                        className="p-2 rounded-lg border border-blue-200 text-blue-600 hover:bg-blue-50 transition cursor-pointer"
+                        aria-label="Open form link"
+                        title="Open form link">
+                        <Link2 size={16} />
+                      </button>
+                    ) : null}
                   </div>
 
                   <span
@@ -220,6 +236,17 @@ const FacultyDashboard = () => {
                   </span>
                   <div className="hidden sm:flex">
                     <StatusBadge status={s.status} />
+                  </div>
+                  <div className="hidden sm:flex">
+                    {s.status === "Active" && s.feedbackUrl ? (
+                      <button
+                        onClick={() => openFormLink(s.feedbackUrl)}
+                        className="p-2 rounded-lg border border-blue-200 text-blue-600 hover:bg-blue-50 transition cursor-pointer"
+                        aria-label="Open link"
+                        title="Open link">
+                        <Link2 size={16} />
+                      </button>
+                    ) : null}
                   </div>
                 </div>
               ))}

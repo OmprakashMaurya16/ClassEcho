@@ -15,134 +15,15 @@ import PieChart from "../components/PieChart";
 import CommentCard from "../components/CommentCard";
 import Header from "../components/Header";
 
-const MOCK_SUBJECTS = [
-  { _id: "overall", name: "Overall", code: "" },
-  { _id: "sub1", name: "Thermodynamics II", code: "ME401" },
-  { _id: "sub2", name: "Heat Transfer", code: "ME402" },
-  { _id: "sub3", name: "Project Management", code: "ME403" },
+const PARAM_CONFIG = [
+  { key: "conceptClarity", label: "Concept Clarity" },
+  { key: "lectureStructure", label: "Lecture Structure" },
+  { key: "subjectMastery", label: "Subject Mastery" },
+  { key: "practicalUnderstanding", label: "Practical Understanding" },
+  { key: "studentEngagement", label: "Student Engagement" },
+  { key: "lecturePace", label: "Lecture Pace" },
+  { key: "learningOutcomeImpact", label: "Learning Outcome Impact" },
 ];
-
-const MOCK_ANALYTICS = {
-  overall: {
-    overallScore: 8.4,
-    trend: [
-      { label: "Week 1", score: 3.2, deptAvg: 3.0 },
-      { label: "Week 3", score: 4.1, deptAvg: 3.5 },
-      { label: "Week 5", score: 4.0, deptAvg: 3.7 },
-      { label: "Week 7", score: 4.3, deptAvg: 3.8 },
-      { label: "Week 9", score: 4.6, deptAvg: 4.0 },
-      { label: "Week 12", score: 4.8, deptAvg: 4.1 },
-    ],
-    parameters: [
-      { label: "Concept Clarity", score: 4.7, max: 5 },
-      { label: "Lecture Structure", score: 4.3, max: 5 },
-      { label: "Subject Mastery", score: 4.8, max: 5 },
-      { label: "Practical Understanding", score: 4.2, max: 5 },
-      { label: "Student Engagement", score: 4.0, max: 5 },
-      { label: "Lecture Pace", score: 3.9, max: 5 },
-      { label: "Learning Outcome Impact", score: 4.5, max: 5 },
-    ],
-    sentiment: { positive: 68, neutral: 22, negative: 10 },
-    comments: [
-      {
-        _id: "c1",
-        initials: "JD",
-        text: "Dr. Sharma explains thermodynamics concepts very clearly. The practical examples help a lot in understanding.",
-        sentiment: "Positive",
-        date: "2 days ago",
-      },
-      {
-        _id: "c2",
-        initials: "AS",
-        text: "The derivations are done a bit too quickly on the board. Would appreciate if we could slow down a bit.",
-        sentiment: "Constructive",
-        date: "4 days ago",
-      },
-      {
-        _id: "c3",
-        initials: "RK",
-        text: "The PDF notes provided after class are excellent for revision.",
-        sentiment: "Positive",
-        date: "1 week ago",
-      },
-      {
-        _id: "c4",
-        initials: "PK",
-        text: "Real-world examples make the concepts easy to relate to.",
-        sentiment: "Positive",
-        date: "1 week ago",
-      },
-      {
-        _id: "c5",
-        initials: "MM",
-        text: "Sometimes the lecture runs over time. Better time management would help.",
-        sentiment: "Constructive",
-        date: "2 weeks ago",
-      },
-    ],
-  },
-  sub1: {
-    overallScore: 9.1,
-    trend: [
-      { label: "Week 1", score: 4.0, deptAvg: 3.2 },
-      { label: "Week 3", score: 4.4, deptAvg: 3.6 },
-      { label: "Week 5", score: 4.5, deptAvg: 3.8 },
-      { label: "Week 7", score: 4.7, deptAvg: 4.0 },
-      { label: "Week 9", score: 4.8, deptAvg: 4.1 },
-      { label: "Week 12", score: 4.9, deptAvg: 4.2 },
-    ],
-    parameters: [
-      { label: "Concept Clarity", score: 4.9, max: 5 },
-      { label: "Lecture Structure", score: 4.6, max: 5 },
-      { label: "Subject Mastery", score: 5.0, max: 5 },
-      { label: "Practical Understanding", score: 4.5, max: 5 },
-      { label: "Student Engagement", score: 4.3, max: 5 },
-      { label: "Lecture Pace", score: 4.1, max: 5 },
-      { label: "Learning Outcome Impact", score: 4.7, max: 5 },
-    ],
-    sentiment: { positive: 78, neutral: 16, negative: 6 },
-    comments: [
-      {
-        _id: "c1",
-        initials: "JD",
-        text: "Best thermodynamics lectures I've had. Very clear and methodical.",
-        sentiment: "Positive",
-        date: "1 day ago",
-      },
-      {
-        _id: "c2",
-        initials: "MN",
-        text: "The worked examples really help to consolidate understanding.",
-        sentiment: "Positive",
-        date: "3 days ago",
-      },
-      {
-        _id: "c3",
-        initials: "AS",
-        text: "Would love more practice problems in class.",
-        sentiment: "Constructive",
-        date: "5 days ago",
-      },
-      {
-        _id: "c4",
-        initials: "RR",
-        text: "Excellent use of visual aids on the board.",
-        sentiment: "Positive",
-        date: "1 week ago",
-      },
-      {
-        _id: "c5",
-        initials: "LK",
-        text: "Very approachable for questions after class.",
-        sentiment: "Positive",
-        date: "2 weeks ago",
-      },
-    ],
-  },
-};
-["sub2", "sub3"].forEach((id) => {
-  MOCK_ANALYTICS[id] = MOCK_ANALYTICS.overall;
-});
 
 const getInitials = (name = "") =>
   name
@@ -156,21 +37,152 @@ const FacultyAnalytics = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const [subjects, setSubjects] = useState(MOCK_SUBJECTS);
+  const [subjects, setSubjects] = useState([
+    { _id: "overall", name: "Overall", code: "" },
+  ]);
   const [activeSubj, setActiveSubj] = useState("overall");
   const [filter, setFilter] = useState("weekly");
-  const [analytics, setAnalytics] = useState(null);
+  const [analytics, setAnalytics] = useState({
+    overallScore: 0,
+    trend: [],
+    parameters: [],
+    sentiment: { positive: 0, neutral: 0, negative: 0 },
+    comments: [],
+  });
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef(null);
 
   useEffect(() => {
-    setLoading(true);
-    const t = setTimeout(() => {
-      setAnalytics(MOCK_ANALYTICS[activeSubj] ?? MOCK_ANALYTICS.overall);
-      setLoading(false);
-    }, 400);
-    return () => clearTimeout(t);
-  }, [activeSubj, filter]);
+    const fetchSubjects = async () => {
+      try {
+        const res = await fetch("/api/subjects/mine", {
+          headers: {
+            ...(user?.token ? { Authorization: `Bearer ${user.token}` } : {}),
+          },
+          credentials: "include",
+        });
+        const payload = await res.json();
+
+        if (!res.ok) return;
+
+        const list = Array.isArray(payload?.data) ? payload.data : [];
+        setSubjects([{ _id: "overall", name: "Overall", code: "" }, ...list]);
+      } catch {}
+    };
+
+    if (user?.token) fetchSubjects();
+  }, [user?.token]);
+
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      setLoading(true);
+
+      try {
+        const subjectQuery =
+          activeSubj !== "overall"
+            ? `?subjectId=${encodeURIComponent(activeSubj)}`
+            : "";
+
+        const headers = {
+          ...(user?.token ? { Authorization: `Bearer ${user.token}` } : {}),
+        };
+
+        const [analyticsRes, timelineRes] = await Promise.all([
+          fetch(`/api/analytics/faculty${subjectQuery}`, {
+            headers,
+            credentials: "include",
+          }),
+          fetch(`/api/analytics/faculty/timeline${subjectQuery}`, {
+            headers,
+            credentials: "include",
+          }),
+        ]);
+
+        const analyticsPayload = await analyticsRes.json();
+        const timelinePayload = await timelineRes.json();
+
+        if (!analyticsRes.ok || !timelineRes.ok) {
+          setAnalytics({
+            overallScore: 0,
+            trend: [],
+            parameters: [],
+            sentiment: { positive: 0, neutral: 0, negative: 0 },
+            comments: [],
+          });
+          return;
+        }
+
+        const stats = analyticsPayload?.data?.stats || {};
+        const total = stats.total || 0;
+
+        const sentiment = {
+          positive: total
+            ? Math.round(((stats.positive || 0) / total) * 100)
+            : 0,
+          neutral: total ? Math.round(((stats.neutral || 0) / total) * 100) : 0,
+          negative: total
+            ? Math.round(((stats.negative || 0) / total) * 100)
+            : 0,
+        };
+
+        const trendRaw = Array.isArray(timelinePayload?.data)
+          ? timelinePayload.data
+          : [];
+
+        const trend = trendRaw.map((point) => {
+          const label =
+            filter === "weekly" ? point.label : point.label?.slice(0, 7);
+
+          return {
+            label,
+            score: point.score,
+            deptAvg: point.deptAvg,
+          };
+        });
+
+        const parameters = PARAM_CONFIG.map((param) => ({
+          label: param.label,
+          score: Number(stats?.[param.key] || 0).toFixed(2),
+          max: 5,
+        }));
+
+        const commentsRaw = Array.isArray(analyticsPayload?.data?.comments)
+          ? analyticsPayload.data.comments
+          : [];
+
+        const comments = commentsRaw.map((item) => ({
+          _id: item._id,
+          initials: "ST",
+          text: item.remark,
+          sentiment:
+            item.sentiment === "Neutral" ? "Constructive" : item.sentiment,
+          date: new Date(item.createdAt).toLocaleDateString("en-US"),
+        }));
+
+        setAnalytics({
+          overallScore: Number(((stats.avgRating || 0) * 2).toFixed(1)),
+          trend,
+          parameters,
+          sentiment,
+          comments,
+        });
+      } catch {
+        setAnalytics({
+          overallScore: 0,
+          trend: [],
+          parameters: [],
+          sentiment: { positive: 0, neutral: 0, negative: 0 },
+          comments: [],
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (user?.token) {
+      fetchAnalytics();
+    }
+  }, [activeSubj, filter, user?.token]);
 
   const activeSubjectLabel =
     subjects.find((s) => s._id === activeSubj)?.name ?? "Overall";
@@ -339,14 +351,6 @@ const FacultyAnalytics = () => {
                       </div>
                     ))}
                   </div>
-                )}
-
-                {(analytics?.comments?.length ?? 0) > 5 && (
-                  <button
-                    className="mt-4 text-center text-blue-600 font-semibold hover:underline"
-                    style={{ fontSize: "clamp(0.72rem, 1.3vw, 0.8rem)" }}>
-                    View All Comments →
-                  </button>
                 )}
               </div>
             </div>
