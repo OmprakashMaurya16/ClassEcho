@@ -18,6 +18,7 @@ import FacultyForm, {
   inputCls,
   Field,
 } from "../components/FacultyForm";
+import { apiClient, isOk } from "../utils/api";
 
 const MOCK_COUNTS = {
   total: null,
@@ -285,15 +286,14 @@ const AdminDashboard = () => {
       const token = JSON.parse(
         sessionStorage.getItem("vit_user") ?? "{}",
       )?.token;
-      const res = await fetch("/api/admin/stats", {
+      const res = await apiClient.get("/api/admin/stats", {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
-        credentials: "include",
       });
-      const data = await res.json();
+      const data = res.data;
 
-      if (!res.ok) {
+      if (!isOk(res)) {
         setCounts(MOCK_COUNTS);
         return;
       }
@@ -362,17 +362,14 @@ const AdminDashboard = () => {
       const token = JSON.parse(
         sessionStorage.getItem("vit_user") ?? "{}",
       )?.token;
-      const res = await fetch("/api/admin/faculty", {
-        method: "POST",
+      const res = await apiClient.post("/api/admin/faculty", payload, {
         headers: {
-          "Content-Type": "application/json",
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
-        body: JSON.stringify(payload),
       });
-      const data = await res.json();
+      const data = res.data;
 
-      if (!res.ok) {
+      if (!isOk(res)) {
         showToast(data?.message || "Failed to add faculty.", "error");
         return;
       }

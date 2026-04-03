@@ -12,6 +12,7 @@ import { useAuth } from "../auth/AuthContext";
 import Footer from "../components/Footer";
 import ActionCard from "../components/ActionCard";
 import Header from "../components/Header";
+import { apiClient, isOk } from "../utils/api";
 
 const StatusBadge = ({ status }) => {
   const map = {
@@ -40,16 +41,16 @@ const FacultyDashboard = () => {
       setLoading(true);
       try {
         const token = user?.token;
-        const res = await fetch("/api/sessions/mine?limit=8", {
+        const res = await apiClient.get("/api/sessions/mine", {
+          params: { limit: 8 },
           headers: {
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
-          credentials: "include",
         });
 
-        const payload = await res.json();
+        const payload = res.data;
 
-        if (!res.ok) {
+        if (!isOk(res)) {
           setRecentSessions([]);
           return;
         }
@@ -112,17 +113,14 @@ const FacultyDashboard = () => {
     setDeletingSessionId(sessionId);
 
     try {
-      const res = await fetch(`/api/sessions/${sessionId}`, {
-        method: "DELETE",
+      const res = await apiClient.delete(`/api/sessions/${sessionId}`, {
         headers: {
           Authorization: `Bearer ${user.token}`,
         },
-        credentials: "include",
       });
 
-      if (!res.ok) {
-        const payload = await res.json().catch(() => null);
-        window.alert(payload?.message || "Failed to delete session.");
+      if (!isOk(res)) {
+        window.alert(res.data?.message || "Failed to delete session.");
         return;
       }
 

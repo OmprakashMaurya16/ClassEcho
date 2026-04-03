@@ -1,4 +1,5 @@
 import { createContext, useContext, useState } from "react";
+import { apiClient, isOk } from "../utils/api";
 
 const ROLE_REDIRECTS = {
   Admin: "/admin/dashboard",
@@ -20,21 +21,16 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (role, email, password) => {
     try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          email: email.trim().toLowerCase(),
-          password,
-        }),
+      const res = await apiClient.post("/api/auth/login", {
+        email: email.trim().toLowerCase(),
+        password,
       });
 
-      const payload = await res.json();
+      const payload = res.data;
       const backendUser = payload?.data?.user;
       const token = payload?.data?.accessToken;
 
-      if (!res.ok || !backendUser || !token) {
+      if (!isOk(res) || !backendUser || !token) {
         return {
           success: false,
           message: payload?.message || "Invalid email or password.",
@@ -76,12 +72,10 @@ export const AuthProvider = ({ children }) => {
     const token = user?.token;
 
     try {
-      await fetch("/api/auth/logout", {
-        method: "POST",
+      await apiClient.post("/api/auth/logout", null, {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
-        credentials: "include",
       });
     } catch {
     } finally {

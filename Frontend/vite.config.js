@@ -5,15 +5,19 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
 
+  const proxy = env.VITE_API_URL
+    ? {
+        "/api": {
+          target: env.VITE_API_URL,
+          changeOrigin: true,
+        },
+      }
+    : undefined;
+
   return {
     plugins: [react(), tailwindcss()],
     server: {
-      proxy: {
-        "/api": {
-          target: env.VITE_API_URL || "http://localhost:5000",
-          changeOrigin: true,
-        },
-      },
+      ...(proxy ? { proxy } : {}),
     },
   };
 });

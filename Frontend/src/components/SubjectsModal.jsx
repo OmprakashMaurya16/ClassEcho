@@ -9,6 +9,7 @@ import {
   BookMarked,
 } from "lucide-react";
 import { DEPARTMENTS, inputCls, Field } from "./FacultyForm";
+import { apiClient, isOk } from "../utils/api";
 
 const SEMESTERS = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII"];
 const EMPTY_SUBJECT = { name: "", code: "", semester: "", department: "" };
@@ -171,16 +172,17 @@ const SubjectsModal = ({
     setLoadingAdd(true);
     try {
       const token = getToken();
-      const res = await fetch(`/api/admin/faculty/${faculty._id}/subjects`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      const res = await apiClient.post(
+        `/api/admin/faculty/${faculty._id}/subjects`,
+        formData,
+        {
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
         },
-        body: JSON.stringify(formData),
-      });
-      const data = await res.json();
-      if (!res.ok) {
+      );
+      const data = res.data;
+      if (!isOk(res)) {
         showToast(data?.message || "Failed to add subject.", "error");
         return;
       }
@@ -202,16 +204,17 @@ const SubjectsModal = ({
     setSavingId(editingSubject._id);
     try {
       const token = getToken();
-      const res = await fetch(`/api/admin/subjects/${editingSubject._id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      const res = await apiClient.put(
+        `/api/admin/subjects/${editingSubject._id}`,
+        formData,
+        {
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
         },
-        body: JSON.stringify(formData),
-      });
-      const data = await res.json();
-      if (!res.ok) {
+      );
+      const data = res.data;
+      if (!isOk(res)) {
         showToast(data?.message || "Failed to update subject.", "error");
         return;
       }
@@ -237,12 +240,11 @@ const SubjectsModal = ({
     setDeletingId(subjectId);
     try {
       const token = getToken();
-      const res = await fetch(`/api/admin/subjects/${subjectId}`, {
-        method: "DELETE",
+      const res = await apiClient.delete(`/api/admin/subjects/${subjectId}`, {
         headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) },
       });
-      const data = await res.json();
-      if (!res.ok) {
+      const data = res.data;
+      if (!isOk(res)) {
         showToast(data?.message || "Failed to delete subject.", "error");
         return;
       }

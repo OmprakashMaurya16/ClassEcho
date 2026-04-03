@@ -14,6 +14,7 @@ import {
   RefreshCw,
 } from "lucide-react";
 import Footer from "../components/Footer";
+import { apiClient, isOk } from "../utils/api";
 const OTP_LENGTH = 6;
 const OTP_EXPIRY = 60;
 const inputCls = (err, disabled) =>
@@ -150,14 +151,12 @@ const ForgotPassword = () => {
     isResend ? setResendLoading(true) : setSendLoading(true);
 
     try {
-      const res = await fetch("/api/auth/forgot-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim().toLowerCase() }),
+      const res = await apiClient.post("/api/auth/forgot-password", {
+        email: email.trim().toLowerCase(),
       });
-      const data = await res.json();
+      const data = res.data;
 
-      if (!res.ok) {
+      if (!isOk(res)) {
         if (isResend) {
           showToast(data?.message || "Failed to resend OTP.", "error");
         } else {
@@ -187,14 +186,13 @@ const ForgotPassword = () => {
     setVerifyLoading(true);
 
     try {
-      const res = await fetch("/api/auth/verify-reset-otp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim().toLowerCase(), otp }),
+      const res = await apiClient.post("/api/auth/verify-reset-otp", {
+        email: email.trim().toLowerCase(),
+        otp,
       });
-      const data = await res.json();
+      const data = res.data;
 
-      if (!res.ok) {
+      if (!isOk(res)) {
         setOtpError(data?.message || "Invalid or expired OTP.");
         return;
       }
@@ -220,18 +218,14 @@ const ForgotPassword = () => {
     setResetLoading(true);
 
     try {
-      const res = await fetch("/api/auth/reset-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: email.trim().toLowerCase(),
-          newPassword: password,
-          confirmPassword: confirm,
-        }),
+      const res = await apiClient.post("/api/auth/reset-password", {
+        email: email.trim().toLowerCase(),
+        newPassword: password,
+        confirmPassword: confirm,
       });
-      const data = await res.json();
+      const data = res.data;
 
-      if (!res.ok) {
+      if (!isOk(res)) {
         showToast(data?.message || "Failed to reset password.", "error");
         return;
       }

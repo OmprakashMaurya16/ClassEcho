@@ -6,6 +6,7 @@ import FacultyCard from "../components/FacultyCard";
 import Pagination from "../components/Pagination";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
+import { apiClient, isOk } from "../utils/api";
 
 const PAGE_SIZE = 12;
 
@@ -61,15 +62,14 @@ const HodDashboard = () => {
 
       setLoading(true);
       try {
-        const res = await fetch("/api/hod/dashboard", {
+        const res = await apiClient.get("/api/hod/dashboard", {
           headers: {
             Authorization: `Bearer ${user.token}`,
           },
-          credentials: "include",
         });
 
-        const payload = await res.json();
-        if (!res.ok) {
+        const payload = res.data;
+        if (!isOk(res)) {
           setStats({ totalFaculty: 0, deptAvgScore: 0 });
           setAllFaculty([]);
           return;

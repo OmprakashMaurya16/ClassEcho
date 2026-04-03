@@ -10,6 +10,7 @@ import SubjectsModal from "../components/SubjectsModal";
 import EditFacultyModal from "../components/EditFacultyModal";
 import ConfirmModal from "../components/ConfirmModal";
 import { DEPARTMENTS } from "../components/FacultyForm";
+import { apiClient, isOk } from "../utils/api";
 
 const PAGE_SIZE = 15;
 
@@ -86,14 +87,15 @@ const ManageFaculty = () => {
           params.set("dept", dept);
         }
 
-        const res = await fetch(`/api/admin/faculty?${params.toString()}`, {
+        const res = await apiClient.get("/api/admin/faculty", {
+          params,
           headers: {
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
         });
 
-        const payload = await res.json();
-        if (!res.ok) {
+        const payload = res.data;
+        if (!isOk(res)) {
           showToast(payload?.message || "Failed to load faculty.", "error");
           setAllFaculties([]);
           setTotalFaculties(0);
@@ -132,12 +134,14 @@ const ManageFaculty = () => {
       const token = JSON.parse(
         sessionStorage.getItem("vit_user") ?? "{}",
       )?.token;
-      const res = await fetch(`/api/admin/faculty/${deleteTarget._id}`, {
-        method: "DELETE",
-        headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) },
-      });
-      const data = await res.json();
-      if (!res.ok) {
+      const res = await apiClient.delete(
+        `/api/admin/faculty/${deleteTarget._id}`,
+        {
+          headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+        },
+      );
+      const data = res.data;
+      if (!isOk(res)) {
         showToast(data?.message || "Failed to delete.", "error");
         return;
       }

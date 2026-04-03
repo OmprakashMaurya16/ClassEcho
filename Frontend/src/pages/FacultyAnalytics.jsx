@@ -14,6 +14,7 @@ import HBar from "../components/HBar";
 import PieChart from "../components/PieChart";
 import CommentCard from "../components/CommentCard";
 import Header from "../components/Header";
+import { apiClient, isOk } from "../utils/api";
 
 const PARAM_CONFIG = [
   { key: "conceptClarity", label: "Concept Clarity" },
@@ -58,18 +59,17 @@ const FacultyAnalytics = () => {
   useEffect(() => {
     const fetchSubjects = async () => {
       try {
-        const res = await fetch(
+        const res = await apiClient.get(
           isHodView ? `/api/subjects/faculty/${id}` : "/api/subjects/mine",
           {
             headers: {
               ...(user?.token ? { Authorization: `Bearer ${user.token}` } : {}),
             },
-            credentials: "include",
           },
         );
-        const payload = await res.json();
+        const payload = res.data;
 
-        if (!res.ok) return;
+        if (!isOk(res)) return;
 
         const list = Array.isArray(payload?.data) ? payload.data : [];
         setSubjects([{ _id: "overall", name: "Overall", code: "" }, ...list]);
@@ -104,20 +104,14 @@ const FacultyAnalytics = () => {
           : `/api/analytics/faculty/timeline${subjectQuery}`;
 
         const [analyticsRes, timelineRes] = await Promise.all([
-          fetch(analyticsUrl, {
-            headers,
-            credentials: "include",
-          }),
-          fetch(timelineUrl, {
-            headers,
-            credentials: "include",
-          }),
+          apiClient.get(analyticsUrl, { headers }),
+          apiClient.get(timelineUrl, { headers }),
         ]);
 
-        const analyticsPayload = await analyticsRes.json();
-        const timelinePayload = await timelineRes.json();
+        const analyticsPayload = analyticsRes.data;
+        const timelinePayload = timelineRes.data;
 
-        if (!analyticsRes.ok || !timelineRes.ok) {
+        if (!isOk(analyticsRes) || !isOk(timelineRes)) {
           setAnalytics({
             overallScore: 0,
             trend: [],

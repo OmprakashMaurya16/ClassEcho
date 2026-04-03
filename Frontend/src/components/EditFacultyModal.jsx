@@ -4,6 +4,7 @@ import FacultyForm, {
   EMPTY_FACULTY_FORM,
   validateFacultyForm,
 } from "./FacultyForm";
+import { apiClient, isOk } from "../utils/api";
 const getToken = () =>
   JSON.parse(sessionStorage.getItem("vit_user") ?? "{}")?.token;
 
@@ -58,16 +59,17 @@ const EditFacultyModal = ({
 
     try {
       const token = getToken();
-      const res = await fetch(`/api/admin/faculty/${faculty._id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      const res = await apiClient.put(
+        `/api/admin/faculty/${faculty._id}`,
+        payload,
+        {
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
         },
-        body: JSON.stringify(payload),
-      });
-      const data = await res.json();
-      if (!res.ok) {
+      );
+      const data = res.data;
+      if (!isOk(res)) {
         showToast(data?.message || "Failed to update faculty.", "error");
         return;
       }

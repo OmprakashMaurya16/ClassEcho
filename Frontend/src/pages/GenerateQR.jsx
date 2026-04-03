@@ -12,6 +12,7 @@ import {
 import { useAuth } from "../auth/AuthContext";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
+import { apiClient, isOk } from "../utils/api";
 
 const GenerateQR = () => {
   const { user } = useAuth();
@@ -32,15 +33,14 @@ const GenerateQR = () => {
     const fetchSubjects = async () => {
       try {
         const token = user?.token;
-        const res = await fetch("/api/subjects/mine", {
+        const res = await apiClient.get("/api/subjects/mine", {
           headers: {
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
-          credentials: "include",
         });
 
-        const payload = await res.json();
-        if (!res.ok) {
+        const payload = res.data;
+        if (!isOk(res)) {
           setSubjects([]);
           return;
         }
@@ -88,17 +88,17 @@ const GenerateQR = () => {
       const token = JSON.parse(
         sessionStorage.getItem("vit_user") ?? "{}",
       )?.token;
-      const res = await fetch("/api/sessions/generate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      const res = await apiClient.post(
+        "/api/sessions/generate",
+        { subjectId, date: lectureDate },
+        {
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
         },
-        body: JSON.stringify({ subjectId, date: lectureDate }),
-        credentials: "include",
-      });
-      const payload = await res.json();
-      if (!res.ok) {
+      );
+      const payload = res.data;
+      if (!isOk(res)) {
         setError(payload?.message || "Failed to generate QR.");
         return;
       }

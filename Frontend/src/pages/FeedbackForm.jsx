@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import logo from "../assets/vit.png";
 import Footer from "../components/Footer";
+import { apiClient, isOk } from "../utils/api";
 
 const QUESTIONS = [
   {
@@ -233,10 +234,12 @@ const FeedbackForm = () => {
       }
 
       try {
-        const res = await fetch(`/api/sessions/${encodeURIComponent(token)}`);
-        const payload = await res.json();
+        const res = await apiClient.get(
+          `/api/sessions/${encodeURIComponent(token)}`,
+        );
+        const payload = res.data;
 
-        if (!res.ok) {
+        if (!isOk(res)) {
           setSessionError(payload?.message || "Session is invalid or expired.");
           setIsSessionValid(false);
           return;
@@ -301,14 +304,10 @@ const FeedbackForm = () => {
     const normalizedRoll = form.rollNo.trim().toLowerCase();
 
     try {
-      const res = await fetch("/api/feedback/submit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      const data = await res.json();
+      const res = await apiClient.post("/api/feedback/submit", payload);
+      const data = res.data;
 
-      if (!res.ok) {
+      if (!isOk(res)) {
         if (res.status === 409) {
           sessionStorage.setItem(getSubmissionKey(token, normalizedRoll), "1");
           sessionStorage.setItem(getLastRollKey(token), normalizedRoll);
