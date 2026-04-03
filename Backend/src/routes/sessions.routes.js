@@ -3,6 +3,7 @@ const {
   generateSession,
   validateSession,
   closeSession,
+  deleteSession,
   getFacultySessions,
 } = require("../controllers/session.controller.js");
 const {
@@ -33,6 +34,13 @@ router.patch(
   authMiddleware,
   authorizeRoles("Faculty"),
   closeSession,
+);
+
+router.delete(
+  "/:sessionId",
+  authMiddleware,
+  authorizeRoles("Faculty"),
+  deleteSession,
 );
 
 module.exports = router;

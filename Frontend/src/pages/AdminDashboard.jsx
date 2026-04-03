@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   RefreshCw,
   Lock,
@@ -260,7 +260,8 @@ const Toast = ({ toast }) => {
 };
 
 const AdminDashboard = () => {
-  const [counts] = useState(MOCK_COUNTS);
+  const [counts, setCounts] = useState(MOCK_COUNTS);
+  const [statsLoading, setStatsLoading] = useState(false);
 
   const [detailsForm, setDetailsForm] = useState(EMPTY_FACULTY_FORM);
   const [detailsErrors, setDetailsErrors] = useState({});
@@ -276,6 +277,47 @@ const AdminDashboard = () => {
     setToast({ message: msg, type });
     setTimeout(() => setToast(null), 4000);
   };
+
+  const fetchFacultyStats = async () => {
+    setStatsLoading(true);
+
+    try {
+      const token = JSON.parse(
+        sessionStorage.getItem("vit_user") ?? "{}",
+      )?.token;
+      const res = await fetch("/api/admin/stats", {
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        credentials: "include",
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setCounts(MOCK_COUNTS);
+        return;
+      }
+
+      const stats = data?.data ?? {};
+      setCounts({
+        total: stats.total ?? 0,
+        INFT: stats.INFT ?? 0,
+        CMPN: stats.CMPN ?? 0,
+        EXTC: stats.EXTC ?? 0,
+        EXCS: stats.EXCS ?? 0,
+        BIOMED: stats.BIOMED ?? 0,
+        FE: stats.FE ?? 0,
+      });
+    } catch {
+      setCounts(MOCK_COUNTS);
+    } finally {
+      setStatsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchFacultyStats();
+  }, []);
 
   const handleNext = () => {
     const errs = validateFacultyForm(detailsForm, "add");
@@ -336,6 +378,7 @@ const AdminDashboard = () => {
       }
 
       showToast(`${detailsForm.fullName} added successfully!`);
+      fetchFacultyStats();
 
       setDetailsForm(EMPTY_FACULTY_FORM);
       setPwdForm({ password: "", confirmPassword: "" });
@@ -404,9 +447,16 @@ const AdminDashboard = () => {
               </div>
 
               <button
+                type="button"
+                onClick={fetchFacultyStats}
+                disabled={statsLoading}
                 className="text-gray-400 mt-0.5"
                 style={{ fontSize: "clamp(0.7rem, 1.4vw, 0.8rem)" }}>
-                <RefreshCw size={13} /> Refresh
+                <RefreshCw
+                  size={13}
+                  className={statsLoading ? "animate-spin" : ""}
+                />{" "}
+                Refresh
               </button>
             </div>
 

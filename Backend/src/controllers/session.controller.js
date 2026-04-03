@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const QRCode = require("qrcode");
 const Session = require("../models/session.model.js");
 const Subject = require("../models/subject.model.js");
+const Feedback = require("../models/feedback.model.js");
 const ApiError = require("../utils/api.error.js");
 const asyncHandler = require("../utils/async.handler.js");
 const sendResponse = require("../utils/response.helper.js");
@@ -159,7 +160,7 @@ const validateSession = asyncHandler(async (req, res) => {
 
 const closeSession = asyncHandler(async (req, res) => {
   const { sessionId } = req.params;
-  const facultyId = req.user.id;
+  const facultyId = String(req.user.id);
 
   const session = await Session.findById(sessionId);
 
@@ -177,9 +178,37 @@ const closeSession = asyncHandler(async (req, res) => {
   return sendResponse(res, 200, "Session closed");
 });
 
+const deleteSession = asyncHandler(async (req, res) => {
+  const { sessionId } = req.params;
+  const facultyId = String(req.user.id);
+
+  const session = await Session.findById(sessionId);
+
+  if (!session) {
+    throw new ApiError(404, "Session not found");
+  }
+
+  if (session.faculty.toString() !== facultyId) {
+    throw new ApiError(403, "Not allowed");
+  }
+
+  const isExpired = session.expiresAt < new Date();
+  if (!session.isActive || isExpired) {
+    throw new ApiError(400, "Only active sessions can be deleted");
+  }
+
+  await Promise.all([
+    Feedback.deleteMany({ session: session._id }),
+    Session.deleteOne({ _id: session._id }),
+  ]);
+
+  return sendResponse(res, 200, "Session deleted");
+});
+
 module.exports = {
   generateSession,
   validateSession,
   closeSession,
+  deleteSession,
   getFacultySessions,
 };

@@ -1,6 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { GraduationCap, QrCode, BarChart2, History, Link2 } from "lucide-react";
+import {
+  GraduationCap,
+  QrCode,
+  BarChart2,
+  History,
+  Link2,
+  Trash2,
+} from "lucide-react";
 import { useAuth } from "../auth/AuthContext";
 import Footer from "../components/Footer";
 import ActionCard from "../components/ActionCard";
@@ -26,6 +33,7 @@ const FacultyDashboard = () => {
 
   const [recentSessions, setRecentSessions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [deletingSessionId, setDeletingSessionId] = useState(null);
 
   useEffect(() => {
     const fetchRecentSessions = async () => {
@@ -90,6 +98,42 @@ const FacultyDashboard = () => {
   const openFormLink = (url) => {
     if (!url) return;
     window.open(url, "_blank", "noopener,noreferrer");
+  };
+
+  const handleDeleteSession = async (sessionId) => {
+    if (!sessionId || !user?.token) return;
+
+    const confirmed = window.confirm(
+      "Delete this session? This will also remove all feedback responses for it.",
+    );
+
+    if (!confirmed) return;
+
+    setDeletingSessionId(sessionId);
+
+    try {
+      const res = await fetch(`/api/sessions/${sessionId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+        credentials: "include",
+      });
+
+      if (!res.ok) {
+        const payload = await res.json().catch(() => null);
+        window.alert(payload?.message || "Failed to delete session.");
+        return;
+      }
+
+      setRecentSessions((prev) =>
+        prev.filter((session) => session._id !== sessionId),
+      );
+    } catch {
+      window.alert("Failed to delete session.");
+    } finally {
+      setDeletingSessionId(null);
+    }
   };
 
   return (
@@ -208,15 +252,27 @@ const FacultyDashboard = () => {
                     <span>{s.responses} responses</span>
                   </div>
                   <div className="sm:hidden mt-1">
-                    {s.status === "Active" && s.feedbackUrl ? (
-                      <button
-                        onClick={() => openFormLink(s.feedbackUrl)}
-                        className="p-2 rounded-lg border border-blue-200 text-blue-600 hover:bg-blue-50 transition cursor-pointer"
-                        aria-label="Open form link"
-                        title="Open form link">
-                        <Link2 size={16} />
-                      </button>
-                    ) : null}
+                    <div className="flex items-center gap-2">
+                      {s.status === "Active" && s.feedbackUrl ? (
+                        <button
+                          onClick={() => openFormLink(s.feedbackUrl)}
+                          className="p-2 rounded-lg border border-blue-200 text-blue-600 hover:bg-blue-50 transition cursor-pointer"
+                          aria-label="Open form link"
+                          title="Open form link">
+                          <Link2 size={16} />
+                        </button>
+                      ) : null}
+                      {s.status === "Active" ? (
+                        <button
+                          onClick={() => handleDeleteSession(s._id)}
+                          disabled={deletingSessionId === s._id}
+                          className="p-2 rounded-lg border border-rose-200 text-rose-600 hover:bg-rose-50 transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                          aria-label="Delete session"
+                          title="Delete session">
+                          <Trash2 size={16} />
+                        </button>
+                      ) : null}
+                    </div>
                   </div>
 
                   <span
@@ -238,15 +294,27 @@ const FacultyDashboard = () => {
                     <StatusBadge status={s.status} />
                   </div>
                   <div className="hidden sm:flex">
-                    {s.status === "Active" && s.feedbackUrl ? (
-                      <button
-                        onClick={() => openFormLink(s.feedbackUrl)}
-                        className="p-2 rounded-lg border border-blue-200 text-blue-600 hover:bg-blue-50 transition cursor-pointer"
-                        aria-label="Open link"
-                        title="Open link">
-                        <Link2 size={16} />
-                      </button>
-                    ) : null}
+                    <div className="flex items-center gap-2">
+                      {s.status === "Active" && s.feedbackUrl ? (
+                        <button
+                          onClick={() => openFormLink(s.feedbackUrl)}
+                          className="p-2 rounded-lg border border-blue-200 text-blue-600 hover:bg-blue-50 transition cursor-pointer"
+                          aria-label="Open link"
+                          title="Open link">
+                          <Link2 size={16} />
+                        </button>
+                      ) : null}
+                      {s.status === "Active" ? (
+                        <button
+                          onClick={() => handleDeleteSession(s._id)}
+                          disabled={deletingSessionId === s._id}
+                          className="p-2 rounded-lg border border-rose-200 text-rose-600 hover:bg-rose-50 transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                          aria-label="Delete session"
+                          title="Delete session">
+                          <Trash2 size={16} />
+                        </button>
+                      ) : null}
+                    </div>
                   </div>
                 </div>
               ))}
